@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "The persistent player profile containing chips, XP, level, and stats.",
+      "type": "object",
+      "properties": {
+        "chips": { "type": "number" },
+        "xp": { "type": "number" },
+        "level": { "type": "number" },
+        "name": { "type": "string" },
+        "avatar": { "type": "string" },
+        "lastDailyReset": { "type": "string" }
+      },
+      "required": ["chips", "xp", "level", "name", "avatar"]
+    },
+    "CasinoAccount": {
+      "title": "CasinoAccount",
+      "description": "Custom casino username and password login account.",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "profile": { "$ref": "#/entities/User" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["username", "password", "profile"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Authenticated player profiles synchronized across devices."
+    },
+    "/casino_accounts/{username}": {
+      "schema": "CasinoAccount",
+      "description": "Custom casino accounts for players logging in with username and password."
+    }
+  }
+}
