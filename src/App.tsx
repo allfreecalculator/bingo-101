@@ -23,6 +23,7 @@ import { CasinoStats } from './components/CasinoStats';
 import { DailyTasks } from './components/DailyTasks';
 import { SlotGame } from './components/SlotGame';
 import { DiceGame } from './components/DiceGame';
+import { CrashGame } from './components/CrashGame';
 import { 
   Coins, 
   Volume2, 
@@ -315,7 +316,7 @@ export default function App() {
 
   // --- Game Settings ---
   const [gameState, setGameState] = useState<GameState>(GameState.LOBBY);
-  const [activeLobbyTab, setActiveLobbyTab] = useState<'BINGO' | 'SLOTS' | 'DICE'>('BINGO');
+  const [activeLobbyTab, setActiveLobbyTab] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH'>('BINGO');
   const [ticketCount, setTicketCount] = useState<number>(2); // Default 2 tickets
   const [targetPattern, setTargetPattern] = useState<PatternType>(PatternType.LINE);
   const [callerSpeed, setCallerSpeed] = useState<number>(3000); // ms (Default Normal 3s)
@@ -1013,7 +1014,8 @@ export default function App() {
               {[
                 { tab: 'BINGO', label: '🎟️ Bingo Floor', desc: '75-Ball classic' },
                 { tab: 'SLOTS', label: '🎰 Vegas Slots', desc: 'Spin & Win' },
-                { tab: 'DICE', label: '🎲 Dice Duel', desc: 'VS House Dealer' }
+                { tab: 'DICE', label: '🎲 Dice Duel', desc: 'VS House Dealer' },
+                { tab: 'CRASH', label: '🚀 Rocket Crash', desc: 'Exponential multiplier' }
               ].map((t) => {
                 const isActive = activeLobbyTab === t.tab;
                 return (
@@ -1049,6 +1051,17 @@ export default function App() {
 
             {activeLobbyTab === 'DICE' && (
               <DiceGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  setProfile(prev => ({ ...prev, chips: prev.chips + delta }));
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'CRASH' && (
+              <CrashGame
                 chips={profile.chips}
                 onUpdateChips={(delta) => {
                   setProfile(prev => ({ ...prev, chips: prev.chips + delta }));
@@ -1248,32 +1261,21 @@ export default function App() {
               </div>
             )}
 
-            {/* Bento Grid: Daily Quests & Statistics */}
-            <div className="grid lg:grid-cols-4 gap-6">
-              {/* Daily Tasks Panel */}
-              <div className="lg:col-span-1">
-                <DailyTasks 
-                  tasks={profile.dailyTasks || []} 
-                  onClaimTask={handleClaimDailyTask} 
-                  onAddTask={handleAddCustomTask}
-                  onProgressTask={handleProgressCustomTask}
-                />
-              </div>
-
-              {/* Casino Statistics & Lucky Wheel Segment */}
-              <div className="lg:col-span-3">
-                <CasinoStats 
-                  profile={profile} 
-                  onAddChips={(amount) => {
-                    setProfile(prev => ({
-                      ...prev,
-                      chips: prev.chips + amount
-                    }));
-                    triggerAlert(`Added ${amount} chips from Lucky Wheel!`, 'success');
-                  }} 
-                />
-              </div>
-            </div>
+            {/* Bento Grid: Daily Quests, Analytics, Lucky Wheel & Leaderboard */}
+            <CasinoStats 
+              profile={profile} 
+              onAddChips={(amount) => {
+                setProfile(prev => ({
+                  ...prev,
+                  chips: prev.chips + amount
+                }));
+                triggerAlert(`Added ${amount} chips from Lucky Wheel!`, 'success');
+              }} 
+              tasks={profile.dailyTasks || []}
+              onClaimTask={handleClaimDailyTask}
+              onAddTask={handleAddCustomTask}
+              onProgressTask={handleProgressCustomTask}
+            />
           </div>
         )}
 
