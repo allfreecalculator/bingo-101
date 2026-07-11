@@ -2,5 +2,6 @@
   "name": "Bingo 101 Casino",
   "description": "An online casino-themed Bingo 101 platform featuring multiple cards, simulated casino betting, auto-daubing, a live caller engine, and visual learning tutorials.",
   "requestFramePermissions": [],
+  "deploymentFramework": "static",
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
