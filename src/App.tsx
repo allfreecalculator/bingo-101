@@ -876,8 +876,10 @@ export default function App() {
           
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.4)] border border-amber-300">
-              <span className="text-xl font-black text-black">75</span>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-600 p-[2px] shadow-[0_0_15px_rgba(245,158,11,0.4)] border border-amber-300 flex items-center justify-center">
+              <div className="w-full h-full rounded-lg bg-[#05050a] flex items-center justify-center">
+                <span className="text-sm font-black text-amber-400 font-mono">101</span>
+              </div>
             </div>
             <div>
               <h1 className="text-lg font-black tracking-tight flex items-center gap-2">
