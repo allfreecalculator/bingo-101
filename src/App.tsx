@@ -37,6 +37,13 @@ import { MegaWheelGame } from './components/MegaWheelGame';
 import { TowerClimbGame } from './components/TowerClimbGame';
 import { ScratchCardGame } from './components/ScratchCardGame';
 import { RockPaperScissorsGame } from './components/RockPaperScissorsGame';
+import { ShellGame } from './components/ShellGame';
+import { DerbyGame } from './components/DerbyGame';
+import { DragonTigerGame } from './components/DragonTigerGame';
+import { CoinPusherGame } from './components/CoinPusherGame';
+import { LimboGame } from './components/LimboGame';
+import { SpaceShooterGame } from './components/SpaceShooterGame';
+import { BaccaratGame } from './components/BaccaratGame';
 import { PolicyDocuments } from './components/PolicyDocuments';
 import { 
   Coins, 
@@ -330,7 +337,7 @@ export default function App() {
 
   // --- Game Settings ---
   const [gameState, setGameState] = useState<GameState>(GameState.LOBBY);
-  const [activeLobbyTab, setActiveLobbyTab] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS'>('BINGO');
+  const [activeLobbyTab, setActiveLobbyTab] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS' | 'SHELL' | 'DERBY' | 'DRAGON_TIGER' | 'PUSHER' | 'LIMBO' | 'SHOOTER' | 'BACCARAT'>('BINGO');
   const [ticketCount, setTicketCount] = useState<number>(2); // Default 2 tickets
   const [targetPattern, setTargetPattern] = useState<PatternType>(PatternType.LINE);
   const [callerSpeed, setCallerSpeed] = useState<number>(3000); // ms (Default Normal 3s)
@@ -589,7 +596,7 @@ export default function App() {
 
   // --- Casino Action Logging Engine ---
   const trackGameAction = (
-    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS',
+    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS' | 'SHELL' | 'DERBY' | 'DRAGON_TIGER' | 'PUSHER' | 'LIMBO' | 'SHOOTER' | 'BACCARAT',
     delta: number,
     description: string
   ) => {
@@ -627,7 +634,14 @@ export default function App() {
         WHEEL: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
         TOWER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
         SCRATCH: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
-        RPS: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
+        RPS: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        SHELL: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        DERBY: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        DRAGON_TIGER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        PUSHER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        LIMBO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        SHOOTER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        BACCARAT: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
       };
 
       const gameStats = stats[game];
@@ -648,7 +662,7 @@ export default function App() {
   };
 
   const handleUpdateChipsWithLog = (
-    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS',
+    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS' | 'SHELL' | 'DERBY' | 'DRAGON_TIGER' | 'PUSHER' | 'LIMBO' | 'SHOOTER' | 'BACCARAT',
     delta: number,
     description?: string
   ) => {
@@ -1144,7 +1158,14 @@ export default function App() {
                 { tab: 'WHEEL', label: '🎡 Dream Mega Wheel', desc: 'Probability Wedge' },
                 { tab: 'TOWER', label: '🏰 Neon Tower Climb', desc: 'Climb Risk Ladder' },
                 { tab: 'SCRATCH', label: '🎫 Cosmic Scratchers', desc: 'Instawin Match 3 Cards' },
-                { tab: 'RPS', label: '⚔️ RPS Showdown', desc: 'Cosmic AI Duel' }
+                { tab: 'RPS', label: '⚔️ RPS Showdown', desc: 'Cosmic AI Duel' },
+                { tab: 'SHELL', label: '🔮 Golden Shells', desc: 'Find Hidden Diamond' },
+                { tab: 'DERBY', label: '🐎 Cyber Derby', desc: 'Virtual Horse Race' },
+                { tab: 'DRAGON_TIGER', label: '🐉 Dragon Tiger', desc: 'High-speed card duel' },
+                { tab: 'PUSHER', label: '🪙 Coin Pusher', desc: 'Slide & Push Ledge' },
+                { tab: 'LIMBO', label: '🚀 Limbo Roll', desc: 'Instant Multipliers' },
+                { tab: 'SHOOTER', label: '☄️ Space Shooter', desc: 'Dodge Asteroids' },
+                { tab: 'BACCARAT', label: '👑 Baccarat Royale', desc: 'Vegas High Roller' }
               ].map((t) => {
                 const isActive = activeLobbyTab === t.tab;
                 return (
@@ -1353,6 +1374,90 @@ export default function App() {
                 onUpdateChips={(delta) => {
                   const desc = delta > 0 ? `RPS Showdown: Won duel! Won +${delta} Chips! ⚔️` : `RPS Showdown duel: Lost ${Math.abs(delta)} Chips`;
                   handleUpdateChipsWithLog('RPS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'SHELL' && (
+              <ShellGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Golden Shells win: Won +${delta} Chips! 🔮` : `Golden Shells bet: Placed ${Math.abs(delta)} Chip wager`;
+                  handleUpdateChipsWithLog('SHELL', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'DERBY' && (
+              <DerbyGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Cyber Derby win: Racer took 1st! Won +${delta} Chips! 🐎` : `Cyber Derby bet: Placed ${Math.abs(delta)} Chip racer wager`;
+                  handleUpdateChipsWithLog('DERBY', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'DRAGON_TIGER' && (
+              <DragonTigerGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Dragon Tiger Duel payout: Won +${delta} Chips! 🐉` : `Dragon Tiger Duel bet: Placed ${Math.abs(delta)} Chip duel wager`;
+                  handleUpdateChipsWithLog('DRAGON_TIGER', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'PUSHER' && (
+              <CoinPusherGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Coin Pusher gold cascade: Won +${delta} Chips! 🪙` : `Coin Pusher play: Dropped ${Math.abs(delta)} Chip coin`;
+                  handleUpdateChipsWithLog('PUSHER', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'LIMBO' && (
+              <LimboGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Limbo roll multiplier: Won +${delta} Chips! 🚀` : `Limbo roll wager: Placed ${Math.abs(delta)} Chip roll`;
+                  handleUpdateChipsWithLog('LIMBO', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'SHOOTER' && (
+              <SpaceShooterGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Space Shooter cashout: Won +${delta} Chips! ☄️` : `Space Shooter crash: Placed ${Math.abs(delta)} Chip launch bet`;
+                  handleUpdateChipsWithLog('SHOOTER', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'BACCARAT' && (
+              <BaccaratGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Baccarat Royale payout: Won +${delta} Chips! 👑` : `Baccarat Royale bet: Placed ${Math.abs(delta)} Chip table wager`;
+                  handleUpdateChipsWithLog('BACCARAT', delta, desc);
                 }}
                 onUpdateTask={updateDailyTaskProgress}
                 triggerAlert={triggerAlert}
