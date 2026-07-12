@@ -32,3 +32,18 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25);
 }
+
+@keyframes reel-scroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-reel-scroll {
+  animation: reel-scroll 0.25s linear infinite;
+  will-change: transform;
+}
+

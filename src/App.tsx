@@ -24,6 +24,11 @@ import { DailyTasks } from './components/DailyTasks';
 import { SlotGame } from './components/SlotGame';
 import { DiceGame } from './components/DiceGame';
 import { CrashGame } from './components/CrashGame';
+import { MinesGame } from './components/MinesGame';
+import { PlinkoGame } from './components/PlinkoGame';
+import { HiLoGame } from './components/HiLoGame';
+import { RouletteGame } from './components/RouletteGame';
+import { PolicyDocuments } from './components/PolicyDocuments';
 import { 
   Coins, 
   Volume2, 
@@ -316,7 +321,7 @@ export default function App() {
 
   // --- Game Settings ---
   const [gameState, setGameState] = useState<GameState>(GameState.LOBBY);
-  const [activeLobbyTab, setActiveLobbyTab] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH'>('BINGO');
+  const [activeLobbyTab, setActiveLobbyTab] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE'>('BINGO');
   const [ticketCount, setTicketCount] = useState<number>(2); // Default 2 tickets
   const [targetPattern, setTargetPattern] = useState<PatternType>(PatternType.LINE);
   const [callerSpeed, setCallerSpeed] = useState<number>(3000); // ms (Default Normal 3s)
@@ -331,6 +336,8 @@ export default function App() {
   const [lastFiveCalled, setLastFiveCalled] = useState<CalledBall[]>([]);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isAcademyOpen, setIsAcademyOpen] = useState<boolean>(false);
+  const [isPolicyOpen, setIsPolicyOpen] = useState<boolean>(false);
+  const [activePolicyTab, setActivePolicyTab] = useState<'about' | 'contact' | 'privacy' | 'terms'>('privacy');
 
   // --- Sound/UI Feedback State ---
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
@@ -571,6 +578,88 @@ export default function App() {
     }
   };
 
+  // --- Casino Action Logging Engine ---
+  const trackGameAction = (
+    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE',
+    delta: number,
+    description: string
+  ) => {
+    try {
+      // 1. Append to localStorage logs list
+      const entry = {
+        id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        game,
+        delta,
+        description
+      };
+      
+      const savedLogs = localStorage.getItem('bingo_casino_logs_v1');
+      const logs = savedLogs ? JSON.parse(savedLogs) : [];
+      logs.unshift(entry);
+      localStorage.setItem('bingo_casino_logs_v1', JSON.stringify(logs.slice(0, 50)));
+
+      // 2. Accumulate in localStorage advanced stats
+      const savedStats = localStorage.getItem('bingo_casino_adv_stats_v1');
+      const stats = savedStats ? JSON.parse(savedStats) : {
+        BINGO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        SLOTS: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        DICE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        CRASH: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        MINES: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        PLINKO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        HILO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        ROULETTE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
+      };
+
+      const gameStats = stats[game];
+      if (gameStats) {
+        if (delta < 0) {
+          gameStats.played += 1;
+          gameStats.bet += Math.abs(delta);
+        } else if (delta > 0) {
+          gameStats.won += 1;
+          gameStats.wonChips += delta;
+          gameStats.maxWin = Math.max(gameStats.maxWin, delta);
+        }
+        localStorage.setItem('bingo_casino_adv_stats_v1', JSON.stringify(stats));
+      }
+    } catch (e) {
+      console.error('Error logging transaction', e);
+    }
+  };
+
+  const handleUpdateChipsWithLog = (
+    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE',
+    delta: number,
+    description?: string
+  ) => {
+    setProfile(prev => {
+      const updatedChips = prev.chips + delta;
+      
+      // Update global profile statistics
+      const updatedStats = { ...prev.stats };
+      if (delta < 0) {
+        updatedStats.gamesPlayed += 1;
+      } else if (delta > 0) {
+        updatedStats.totalChipsWon += delta;
+        updatedStats.highestWin = Math.max(updatedStats.highestWin, delta);
+      }
+
+      // Generate description if not provided
+      const finalDesc = description || (delta > 0 ? `${game} Profit: +${delta} Chips! 🎉` : `${game} wager: -${Math.abs(delta)} Chips`);
+      
+      // Trigger local storage and analytical logging
+      trackGameAction(game, delta, finalDesc);
+
+      return {
+        ...prev,
+        chips: updatedChips,
+        stats: updatedStats
+      };
+    });
+  };
+
   // --- Voice Engine ---
   const speakNumber = (num: number) => {
     if (!isVoiceEnabled || !('speechSynthesis' in window)) return;
@@ -596,10 +685,7 @@ export default function App() {
     }
 
     // Deduct entry fee
-    setProfile(prev => ({
-      ...prev,
-      chips: prev.chips - cost
-    }));
+    handleUpdateChipsWithLog('BINGO', -cost, `Bought ${ticketCount} Bingo Tickets`);
 
     // Generate Tickets
     const generated: BingoCardData[] = Array.from({ length: ticketCount }, (_, i) => 
@@ -674,18 +760,26 @@ export default function App() {
     });
   };
 
+  const drawNextBallRef = useRef(drawNextBall);
+  useEffect(() => {
+    drawNextBallRef.current = drawNextBall;
+  });
+
   // Setup interval on state transition
   useEffect(() => {
     if (gameState === GameState.PLAYING && !isPaused) {
       const interval = setInterval(() => {
-        drawNextBall();
+        drawNextBallRef.current();
       }, callerSpeed);
       setActiveCallInterval(interval);
       return () => clearInterval(interval);
     } else {
-      if (activeCallInterval) clearInterval(activeCallInterval);
+      if (activeCallInterval) {
+        clearInterval(activeCallInterval);
+        setActiveCallInterval(null);
+      }
     }
-  }, [gameState, isPaused, ballPool, callerSpeed, isAutoDaub]);
+  }, [gameState, isPaused, callerSpeed]);
 
   const handleNoMoreBalls = () => {
     setGameState(GameState.GAME_OVER);
@@ -791,6 +885,7 @@ export default function App() {
       });
 
       updateDailyTaskProgress('win_bingo', 1);
+      trackGameAction('BINGO', totalWinningPrizes, `Bingo Claim: Won ${totalWinningPrizes} Chips! 🎉`);
 
       // Pause caller immediately to let them celebrate
       setIsPaused(true);
@@ -802,6 +897,7 @@ export default function App() {
         ...prev,
         chips: Math.max(0, prev.chips - penalty)
       }));
+      trackGameAction('BINGO', -penalty, `False Bingo penalty`);
       triggerAlert(`False Bingo! No matching pattern yet. Penalty: -${penalty} Chips.`, 'error');
     }
   };
@@ -1017,7 +1113,11 @@ export default function App() {
                 { tab: 'BINGO', label: '🎟️ Bingo Floor', desc: '75-Ball classic' },
                 { tab: 'SLOTS', label: '🎰 Vegas Slots', desc: 'Spin & Win' },
                 { tab: 'DICE', label: '🎲 Dice Duel', desc: 'VS House Dealer' },
-                { tab: 'CRASH', label: '🚀 Rocket Crash', desc: 'Exponential multiplier' }
+                { tab: 'CRASH', label: '🚀 Rocket Crash', desc: 'Exponential multiplier' },
+                { tab: 'MINES', label: '💣 Mines Floor', desc: 'Dodge & Multiplier' },
+                { tab: 'PLINKO', label: '🎯 Cosmic Plinko', desc: 'Pegboard Multipliers' },
+                { tab: 'HILO', label: '🔥 Hi-Lo Duel', desc: 'Predict Higher/Lower' },
+                { tab: 'ROULETTE', label: '🎡 Neon Roulette', desc: 'Interactive Wheel' }
               ].map((t) => {
                 const isActive = activeLobbyTab === t.tab;
                 return (
@@ -1044,7 +1144,8 @@ export default function App() {
               <SlotGame
                 chips={profile.chips}
                 onUpdateChips={(delta) => {
-                  setProfile(prev => ({ ...prev, chips: prev.chips + delta }));
+                  const desc = delta > 0 ? `Vegas Slots Spin: Won +${delta} Chips! 🎉` : `Vegas Slots: Placed ${Math.abs(delta)} Chip spin`;
+                  handleUpdateChipsWithLog('SLOTS', delta, desc);
                 }}
                 onUpdateTask={updateDailyTaskProgress}
                 triggerAlert={triggerAlert}
@@ -1055,7 +1156,8 @@ export default function App() {
               <DiceGame
                 chips={profile.chips}
                 onUpdateChips={(delta) => {
-                  setProfile(prev => ({ ...prev, chips: prev.chips + delta }));
+                  const desc = delta > 0 ? `Dice Duel Round: Defeated Dealer! Won +${delta} Chips 🎲` : `Dice Duel Round: Dealer won. Lost ${Math.abs(delta)} Chips`;
+                  handleUpdateChipsWithLog('DICE', delta, desc);
                 }}
                 onUpdateTask={updateDailyTaskProgress}
                 triggerAlert={triggerAlert}
@@ -1066,7 +1168,56 @@ export default function App() {
               <CrashGame
                 chips={profile.chips}
                 onUpdateChips={(delta) => {
-                  setProfile(prev => ({ ...prev, chips: prev.chips + delta }));
+                  const desc = delta > 0 ? `Rocket Flight Cashout: Won +${delta} Chips! 🚀` : `Rocket Flight: Crashed! Lost ${Math.abs(delta)} Chips`;
+                  handleUpdateChipsWithLog('CRASH', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'MINES' && (
+              <MinesGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Mines Sweeper Cashout: Won +${delta} Chips! 💣` : `Mines Sweeper: Hit a Mine! Lost ${Math.abs(delta)} Chips`;
+                  handleUpdateChipsWithLog('MINES', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'PLINKO' && (
+              <PlinkoGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Plinko Land: Won +${delta} Chips! 🎯` : `Plinko wager: Placed ${Math.abs(delta)} Chip drop`;
+                  handleUpdateChipsWithLog('PLINKO', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'HILO' && (
+              <HiLoGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Hi-Lo Duel Cashout: Won +${delta} Chips! 🏆` : `Hi-Lo Duel wager: Placed ${Math.abs(delta)} Chip wager`;
+                  handleUpdateChipsWithLog('HILO', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'ROULETTE' && (
+              <RouletteGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Vegas Neon Roulette win: Won +${delta} Chips! 🎉` : `Vegas Neon Roulette bet: Placed ${Math.abs(delta)} Chip board bet`;
+                  handleUpdateChipsWithLog('ROULETTE', delta, desc);
                 }}
                 onUpdateTask={updateDailyTaskProgress}
                 triggerAlert={triggerAlert}
@@ -1527,7 +1678,29 @@ export default function App() {
       </main>
 
       {/* FOOTER METADATA / INFORMATION */}
-      <footer className="bg-[#05050a] border-t border-white/10 py-8 px-6 mt-16 text-center text-xs text-white/40 font-mono space-y-2">
+      <footer className="bg-[#05050a] border-t border-white/10 py-12 px-6 mt-16 text-center text-xs text-white/40 font-mono space-y-4">
+        {/* Compliance Pages Links list */}
+        <div className="flex flex-wrap justify-center items-center gap-6 pb-2 text-[11px]">
+          {[
+            { id: 'about', label: 'ABOUT US' },
+            { id: 'contact', label: 'CONTACT US' },
+            { id: 'privacy', label: 'PRIVACY POLICY' },
+            { id: 'terms', label: 'TERMS & CONDITIONS' }
+          ].map((link) => (
+            <button
+              key={link.id}
+              id={`footer-link-${link.id}`}
+              onClick={() => {
+                setActivePolicyTab(link.id as any);
+                setIsPolicyOpen(true);
+              }}
+              className="text-white/40 hover:text-amber-400 transition-colors font-bold uppercase tracking-wider cursor-pointer border-b border-transparent hover:border-amber-400/30 pb-0.5"
+            >
+              {link.label}
+            </button>
+          ))}
+        </div>
+
         <p>© 2026 BINGO 101 CASINO - FULLY SECURED PLAYGROUND</p>
         <p className="max-w-md mx-auto text-[10px] text-white/30 leading-relaxed">
           This platform uses fully simulated non-monetary currency for learning & entertainment purposes only. Practice rules, auto-daub combinations, and claim jackpot ratios inside our safe system.
@@ -1551,6 +1724,25 @@ export default function App() {
                   setIsAcademyOpen(false);
                   triggerAlert(`Target pattern updated to: ${getPatternDisplayName(pat)}`, 'success');
                 }}
+              />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Corporate Compliance Policy documents Modal Overlay */}
+      <AnimatePresence>
+        {isPolicyOpen && (
+          <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-4xl flex justify-center"
+            >
+              <PolicyDocuments
+                initialTab={activePolicyTab}
+                onClose={() => setIsPolicyOpen(false)}
               />
             </motion.div>
           </div>

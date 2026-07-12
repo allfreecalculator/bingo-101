@@ -19,6 +19,8 @@ const REEL_SYMBOLS = [
   { char: '7️⃣', weight: 3, name: 'Seven', mult: 50, color: 'text-red-500' }
 ];
 
+const SPINNING_SYMBOLS = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣', '🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣'];
+
 export const SlotGame: React.FC<SlotGameProps> = ({
   chips,
   onUpdateChips,
@@ -27,6 +29,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
 }) => {
   const [bet, setBet] = useState<number>(20);
   const [spinning, setSpinning] = useState<boolean>(false);
+  const [reelsSpinning, setReelsSpinning] = useState<boolean[]>([false, false, false]);
   // Cylindrical reels: each reel displays 3 items vertically (top, middle/payline, bottom)
   const [reels, setReels] = useState<string[][]>([
     ['🍋', '🍒', '🍊'],
@@ -126,6 +129,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
     // Deduct wager
     onUpdateChips(-bet);
     setSpinning(true);
+    setReelsSpinning([true, true, true]);
     setLastWin(null);
     onUpdateTask('play_slots', 1);
 
@@ -149,37 +153,17 @@ export const SlotGame: React.FC<SlotGameProps> = ({
     const target2 = getRandomSymbol();
     const target3 = getRandomSymbol();
 
-    // Reels continuous cycling ticker speeds
-    const t1 = setInterval(() => {
-      setReels(prev => [
-        [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()],
-        prev[1],
-        prev[2]
-      ]);
+    // Start a single lightweight tick interval for audio feedback only (NO heavy state updates!)
+    let ticks = 0;
+    const tickInterval = setInterval(() => {
       playSound('tick');
-    }, 75);
-
-    const t2 = setInterval(() => {
-      setReels(prev => [
-        prev[0],
-        [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()],
-        prev[2]
-      ]);
-      playSound('tick');
-    }, 85);
-
-    const t3 = setInterval(() => {
-      setReels(prev => [
-        prev[0],
-        prev[1],
-        [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()]
-      ]);
-      playSound('tick');
-    }, 95);
+      ticks++;
+      if (ticks > 22) clearInterval(tickInterval);
+    }, 90);
 
     // Staggered reel stops
     setTimeout(() => {
-      clearInterval(t1);
+      setReelsSpinning(prev => [false, prev[1], prev[2]]);
       setReels(prev => [
         [getRandomSymbol(), target1, getRandomSymbol()],
         prev[1],
@@ -189,7 +173,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
     }, 1000);
 
     setTimeout(() => {
-      clearInterval(t2);
+      setReelsSpinning(prev => [prev[0], false, prev[2]]);
       setReels(prev => [
         prev[0],
         [getRandomSymbol(), target2, getRandomSymbol()],
@@ -199,7 +183,8 @@ export const SlotGame: React.FC<SlotGameProps> = ({
     }, 1600);
 
     setTimeout(() => {
-      clearInterval(t3);
+      clearInterval(tickInterval);
+      setReelsSpinning([false, false, false]);
       setReels(prev => [
         prev[0],
         prev[1],
@@ -372,24 +357,34 @@ export const SlotGame: React.FC<SlotGameProps> = ({
               <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#04040a] to-transparent pointer-events-none z-10" />
 
               {/* Ticker reels column items */}
-              {reelSymbols.map((symbol, symbolIdx) => {
-                const isMiddle = symbolIdx === 1;
-                return (
-                  <motion.div
-                    key={`${reelIdx}-${symbolIdx}-${symbol}`}
-                    initial={{ y: spinning ? -25 : 0, opacity: isMiddle ? 1 : 0.25 }}
-                    animate={{ y: 0, opacity: isMiddle ? 1 : 0.25, scale: isMiddle ? 1.2 : 0.8 }}
-                    transition={{ type: 'spring', stiffness: 220, damping: 14 }}
-                    className={`flex items-center justify-center h-12 transition-all ${
-                      isMiddle 
-                        ? 'font-black filter drop-shadow-[0_2px_10px_rgba(251,191,36,0.35)] relative z-20 scale-110' 
-                        : 'blur-[0.5px] scale-90'
-                    }`}
-                  >
-                    <span className="text-4xl">{symbol}</span>
-                  </motion.div>
-                );
-              })}
+              {reelsSpinning[reelIdx] ? (
+                <div className="flex flex-col items-center animate-reel-scroll filter blur-[2px] h-[340px] w-full justify-around select-none">
+                  {SPINNING_SYMBOLS.map((sym, idx) => (
+                    <div key={idx} className="flex items-center justify-center h-12 text-4xl">
+                      {sym}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                reelSymbols.map((symbol, symbolIdx) => {
+                  const isMiddle = symbolIdx === 1;
+                  return (
+                    <motion.div
+                      key={`${reelIdx}-${symbolIdx}`}
+                      initial={{ y: -15, opacity: isMiddle ? 1 : 0.25 }}
+                      animate={{ y: 0, opacity: isMiddle ? 1 : 0.25, scale: isMiddle ? 1.2 : 0.8 }}
+                      transition={{ type: 'spring', stiffness: 220, damping: 14 }}
+                      className={`flex items-center justify-center h-12 transition-all ${
+                        isMiddle 
+                          ? 'font-black filter drop-shadow-[0_2px_10px_rgba(251,191,36,0.35)] relative z-20 scale-110' 
+                          : 'blur-[0.5px] scale-90'
+                      }`}
+                    >
+                      <span className="text-4xl">{symbol}</span>
+                    </motion.div>
+                  );
+                })
+              )}
             </div>
           ))}
         </div>
