@@ -19,7 +19,11 @@ import {
   RefreshCw,
   X,
   Target,
-  CircleDot
+  CircleDot,
+  Layers,
+  Spade,
+  Grid,
+  Gamepad2
 } from 'lucide-react';
 import { PlayerProfile } from '../types';
 
@@ -31,7 +35,7 @@ interface AnalyticsCenterProps {
 interface GameLog {
   id: string;
   timestamp: string;
-  game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE';
+  game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS';
   delta: number;
   description: string;
 }
@@ -45,11 +49,20 @@ interface AdvancedStats {
   PLINKO: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
   HILO: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
   ROULETTE: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
+  BLACKJACK: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
+  POKER: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
+  KENO: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
+  SNAKE: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
+  COINFLIP: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
+  WHEEL: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
+  TOWER: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
+  SCRATCH: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
+  RPS: { played: number; won: number; bet: number; wonChips: number; maxWin: number };
 }
 
 export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClose }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'floors' | 'history'>('overview');
-  const [selectedFloor, setSelectedFloor] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE'>('BINGO');
+  const [selectedFloor, setSelectedFloor] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS'>('BINGO');
   const [logs, setLogs] = useState<GameLog[]>([]);
   const [advStats, setAdvStats] = useState<AdvancedStats>({
     BINGO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
@@ -59,7 +72,16 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClo
     MINES: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
     PLINKO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
     HILO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
-    ROULETTE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
+    ROULETTE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+    BLACKJACK: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+    POKER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+    KENO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+    SNAKE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+    COINFLIP: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+    WHEEL: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+    TOWER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+    SCRATCH: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+    RPS: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
   });
   const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; val: number; index: number } | null>(null);
 
@@ -78,7 +100,16 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClo
         MINES: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
         PLINKO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
         HILO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
-        ROULETTE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
+        ROULETTE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        BLACKJACK: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        POKER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        KENO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        SNAKE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        COINFLIP: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        WHEEL: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        TOWER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        SCRATCH: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        RPS: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
       };
 
       // Seed if empty to represent initial history match
@@ -147,7 +178,16 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClo
           MINES: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
           PLINKO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
           HILO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
-          ROULETTE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
+          ROULETTE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+          BLACKJACK: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+          POKER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+          KENO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+          SNAKE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+          COINFLIP: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+          WHEEL: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+          TOWER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+          SCRATCH: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+          RPS: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
         };
         setLogs([]);
         setAdvStats(resetStats);
@@ -225,7 +265,7 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClo
   const winPercent = gamesPlayed > 0 ? Math.round((gamesWon / gamesPlayed) * 100) : 0;
 
   // Icon selector helper
-  const getGameIcon = (game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE') => {
+  const getGameIcon = (game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS') => {
     switch (game) {
       case 'BINGO': return <Ticket className="w-4 h-4 text-blue-400" />;
       case 'SLOTS': return <Sparkles className="w-4 h-4 text-emerald-400" />;
@@ -235,10 +275,19 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClo
       case 'PLINKO': return <Target className="w-4 h-4 text-amber-400" />;
       case 'HILO': return <Flame className="w-4 h-4 text-red-400" />;
       case 'ROULETTE': return <CircleDot className="w-4 h-4 text-emerald-400" />;
+      case 'BLACKJACK': return <Layers className="w-4 h-4 text-purple-400" />;
+      case 'POKER': return <Spade className="w-4 h-4 text-amber-400" />;
+      case 'KENO': return <Grid className="w-4 h-4 text-cyan-400" />;
+      case 'SNAKE': return <Gamepad2 className="w-4 h-4 text-blue-400" />;
+      case 'COINFLIP': return <Coins className="w-4 h-4 text-cyan-400" />;
+      case 'WHEEL': return <CircleDot className="w-4 h-4 text-indigo-400 animate-spin-slow" />;
+      case 'TOWER': return <Layers className="w-4 h-4 text-emerald-400" />;
+      case 'SCRATCH': return <Ticket className="w-4 h-4 text-pink-400" />;
+      case 'RPS': return <Dices className="w-4 h-4 text-pink-500" />;
     }
   };
 
-  const getGameColor = (game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE') => {
+  const getGameColor = (game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS') => {
     switch (game) {
       case 'BINGO': return 'border-blue-500/20 bg-blue-500/10 text-blue-400';
       case 'SLOTS': return 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400';
@@ -248,6 +297,15 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClo
       case 'PLINKO': return 'border-amber-500/20 bg-amber-500/10 text-amber-400';
       case 'HILO': return 'border-red-500/20 bg-red-500/10 text-red-400';
       case 'ROULETTE': return 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400';
+      case 'BLACKJACK': return 'border-purple-500/20 bg-purple-500/10 text-purple-400';
+      case 'POKER': return 'border-amber-500/20 bg-amber-500/10 text-amber-400';
+      case 'KENO': return 'border-cyan-500/20 bg-cyan-500/10 text-cyan-400';
+      case 'SNAKE': return 'border-blue-500/20 bg-blue-500/10 text-blue-400';
+      case 'COINFLIP': return 'border-cyan-500/20 bg-cyan-500/10 text-cyan-400';
+      case 'WHEEL': return 'border-indigo-500/20 bg-indigo-500/10 text-indigo-400';
+      case 'TOWER': return 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400';
+      case 'SCRATCH': return 'border-pink-500/20 bg-pink-500/10 text-pink-400';
+      case 'RPS': return 'border-pink-600/20 bg-pink-600/10 text-pink-500';
     }
   };
 
@@ -512,7 +570,12 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClo
                       { id: 'CRASH' as const, stats: advStats.CRASH, label: 'Crash' },
                       { id: 'MINES' as const, stats: advStats.MINES, label: 'Mines' },
                       { id: 'PLINKO' as const, stats: advStats.PLINKO, label: 'Plinko' },
-                      { id: 'HILO' as const, stats: advStats.HILO, label: 'Hi-Lo' }
+                      { id: 'HILO' as const, stats: advStats.HILO, label: 'Hi-Lo' },
+                      { id: 'ROULETTE' as const, stats: advStats.ROULETTE, label: 'Roulette' },
+                      { id: 'BLACKJACK' as const, stats: advStats.BLACKJACK, label: 'Blackjack' },
+                      { id: 'POKER' as const, stats: advStats.POKER, label: 'Poker' },
+                      { id: 'KENO' as const, stats: advStats.KENO, label: 'Keno' },
+                      { id: 'SNAKE' as const, stats: advStats.SNAKE, label: 'Snake' }
                     ].map((item) => {
                       const wr = item.stats.played > 0 ? Math.round((item.stats.won / item.stats.played) * 100) : 0;
                       return (
@@ -549,7 +612,11 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClo
                 { id: 'MINES' as const, label: '💣 Mines Floor' },
                 { id: 'PLINKO' as const, label: '🎯 Cosmic Plinko' },
                 { id: 'HILO' as const, label: '🔥 Hi-Lo Duel' },
-                { id: 'ROULETTE' as const, label: '🎡 Neon Roulette' }
+                { id: 'ROULETTE' as const, label: '🎡 Neon Roulette' },
+                { id: 'BLACKJACK' as const, label: '🃏 Vegas 21' },
+                { id: 'POKER' as const, label: '♠️ Video Poker' },
+                { id: 'KENO' as const, label: '✨ Cosmic Keno' },
+                { id: 'SNAKE' as const, label: '🎮 Cosmic Snake' }
               ].map((f) => {
                 const isActive = selectedFloor === f.id;
                 return (
@@ -585,7 +652,11 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClo
                      selectedFloor === 'CRASH' ? 'Rocket Crash' : 
                      selectedFloor === 'MINES' ? 'Mines Sweeper' : 
                      selectedFloor === 'PLINKO' ? 'Cosmic Plinko' : 
-                     selectedFloor === 'HILO' ? 'Hi-Lo Card Duel' : 'Vegas Neon Roulette'}
+                     selectedFloor === 'HILO' ? 'Hi-Lo Card Duel' : 
+                     selectedFloor === 'ROULETTE' ? 'Vegas Neon Roulette' : 
+                     selectedFloor === 'BLACKJACK' ? 'Classic Blackjack' : 
+                     selectedFloor === 'POKER' ? 'Retro Video Poker' : 
+                     selectedFloor === 'KENO' ? 'Cosmic Neon Keno' : 'Cosmic Neon Snake'}
                   </h3>
                   <p className="text-xs text-white/50 leading-relaxed">
                     {selectedFloor === 'BINGO' && 'Calculate auto-daub lines, corner counts, and high payout blackout sequences.'}
@@ -596,6 +667,10 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({ profile, onClo
                     {selectedFloor === 'PLINKO' && 'Set custom row density and risk factors. Drop golden balls to hit edge multipliers.'}
                     {selectedFloor === 'HILO' && 'Set consecutive correct guesses on higher or lower cards. Bank your multipliers before a wrong prediction.'}
                     {selectedFloor === 'ROULETTE' && 'Place chips on standard European roulette options. Spin the wheel to test high odds combos.'}
+                    {selectedFloor === 'BLACKJACK' && 'Beat the house dealer at Classic 21 cards. Use doubles and hits dynamically.'}
+                    {selectedFloor === 'POKER' && 'Hold cards and draw replacements. Hit Royal Flushes or simple pairs of Jacks or Better.'}
+                    {selectedFloor === 'KENO' && 'Choose up to 10 spots on an 80-number board. Match drawn balls to achieve a high payout jackpot.'}
+                    {selectedFloor === 'SNAKE' && 'Guide the snake to eat glowing neon chips. Avoid walls and tail segments to win high multipliers.'}
                   </p>
                 </div>
 

@@ -28,6 +28,15 @@ import { MinesGame } from './components/MinesGame';
 import { PlinkoGame } from './components/PlinkoGame';
 import { HiLoGame } from './components/HiLoGame';
 import { RouletteGame } from './components/RouletteGame';
+import { BlackjackGame } from './components/BlackjackGame';
+import { VideoPokerGame } from './components/VideoPokerGame';
+import { KenoGame } from './components/KenoGame';
+import { SnakeGame } from './components/SnakeGame';
+import { CoinFlipGame } from './components/CoinFlipGame';
+import { MegaWheelGame } from './components/MegaWheelGame';
+import { TowerClimbGame } from './components/TowerClimbGame';
+import { ScratchCardGame } from './components/ScratchCardGame';
+import { RockPaperScissorsGame } from './components/RockPaperScissorsGame';
 import { PolicyDocuments } from './components/PolicyDocuments';
 import { 
   Coins, 
@@ -321,7 +330,7 @@ export default function App() {
 
   // --- Game Settings ---
   const [gameState, setGameState] = useState<GameState>(GameState.LOBBY);
-  const [activeLobbyTab, setActiveLobbyTab] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE'>('BINGO');
+  const [activeLobbyTab, setActiveLobbyTab] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS'>('BINGO');
   const [ticketCount, setTicketCount] = useState<number>(2); // Default 2 tickets
   const [targetPattern, setTargetPattern] = useState<PatternType>(PatternType.LINE);
   const [callerSpeed, setCallerSpeed] = useState<number>(3000); // ms (Default Normal 3s)
@@ -580,7 +589,7 @@ export default function App() {
 
   // --- Casino Action Logging Engine ---
   const trackGameAction = (
-    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE',
+    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS',
     delta: number,
     description: string
   ) => {
@@ -609,7 +618,16 @@ export default function App() {
         MINES: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
         PLINKO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
         HILO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
-        ROULETTE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
+        ROULETTE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        BLACKJACK: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        POKER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        KENO: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        SNAKE: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        COINFLIP: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        WHEEL: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        TOWER: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        SCRATCH: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 },
+        RPS: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
       };
 
       const gameStats = stats[game];
@@ -630,7 +648,7 @@ export default function App() {
   };
 
   const handleUpdateChipsWithLog = (
-    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE',
+    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS',
     delta: number,
     description?: string
   ) => {
@@ -1117,7 +1135,16 @@ export default function App() {
                 { tab: 'MINES', label: '💣 Mines Floor', desc: 'Dodge & Multiplier' },
                 { tab: 'PLINKO', label: '🎯 Cosmic Plinko', desc: 'Pegboard Multipliers' },
                 { tab: 'HILO', label: '🔥 Hi-Lo Duel', desc: 'Predict Higher/Lower' },
-                { tab: 'ROULETTE', label: '🎡 Neon Roulette', desc: 'Interactive Wheel' }
+                { tab: 'ROULETTE', label: '🎡 Neon Roulette', desc: 'Interactive Wheel' },
+                { tab: 'BLACKJACK', label: '🃏 Vegas 21', desc: 'Classic Cards' },
+                { tab: 'POKER', label: '♠️ Video Poker', desc: 'Draw Jacks or Better' },
+                { tab: 'KENO', label: '✨ Cosmic Keno', desc: 'Vegas Number Board' },
+                { tab: 'SNAKE', label: '🎮 Cosmic Snake', desc: 'Neon Arcade Snake' },
+                { tab: 'COINFLIP', label: '🪙 Neon Coin Toss', desc: 'Streak Multipliers' },
+                { tab: 'WHEEL', label: '🎡 Dream Mega Wheel', desc: 'Probability Wedge' },
+                { tab: 'TOWER', label: '🏰 Neon Tower Climb', desc: 'Climb Risk Ladder' },
+                { tab: 'SCRATCH', label: '🎫 Cosmic Scratchers', desc: 'Instawin Match 3 Cards' },
+                { tab: 'RPS', label: '⚔️ RPS Showdown', desc: 'Cosmic AI Duel' }
               ].map((t) => {
                 const isActive = activeLobbyTab === t.tab;
                 return (
@@ -1218,6 +1245,114 @@ export default function App() {
                 onUpdateChips={(delta) => {
                   const desc = delta > 0 ? `Vegas Neon Roulette win: Won +${delta} Chips! 🎉` : `Vegas Neon Roulette bet: Placed ${Math.abs(delta)} Chip board bet`;
                   handleUpdateChipsWithLog('ROULETTE', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'BLACKJACK' && (
+              <BlackjackGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Classic Blackjack win: Won +${delta} Chips! 🎉` : `Classic Blackjack bet: Placed ${Math.abs(delta)} Chip bet`;
+                  handleUpdateChipsWithLog('BLACKJACK', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'POKER' && (
+              <VideoPokerGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Video Poker win: Won +${delta} Chips! 🎉` : `Video Poker bet: Placed ${Math.abs(delta)} Chip bet`;
+                  handleUpdateChipsWithLog('POKER', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'KENO' && (
+              <KenoGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Cosmic Keno win: Won +${delta} Chips! 🎉` : `Cosmic Keno bet: Placed ${Math.abs(delta)} Chip board bet`;
+                  handleUpdateChipsWithLog('KENO', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'SNAKE' && (
+              <SnakeGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Cosmic Snake win: Won +${delta} Chips! 🎉` : `Cosmic Snake bet: Placed ${Math.abs(delta)} Chip wager`;
+                  handleUpdateChipsWithLog('SNAKE', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'COINFLIP' && (
+              <CoinFlipGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Neon Coin Toss: Landed correctly! Won +${delta} Chips! 🎉` : `Neon Coin Toss wager: Lost ${Math.abs(delta)} Chips`;
+                  handleUpdateChipsWithLog('COINFLIP', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'WHEEL' && (
+              <MegaWheelGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Dream Mega Wheel: Hit multiplier! Won +${delta} Chips! 🎡` : `Dream Mega Wheel wager: Lost ${Math.abs(delta)} Chips`;
+                  handleUpdateChipsWithLog('WHEEL', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'TOWER' && (
+              <TowerClimbGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Neon Tower Climb: Cashout payout! Won +${delta} Chips! 🏰` : `Neon Tower Climb wager: Lost ${Math.abs(delta)} Chips`;
+                  handleUpdateChipsWithLog('TOWER', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'SCRATCH' && (
+              <ScratchCardGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Cosmic Scratchers: Matched symbols! Won +${delta} Chips! 🎫` : `Cosmic Scratchers ticket: Lost ${Math.abs(delta)} Chips`;
+                  handleUpdateChipsWithLog('SCRATCH', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'RPS' && (
+              <RockPaperScissorsGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `RPS Showdown: Won duel! Won +${delta} Chips! ⚔️` : `RPS Showdown duel: Lost ${Math.abs(delta)} Chips`;
+                  handleUpdateChipsWithLog('RPS', delta, desc);
                 }}
                 onUpdateTask={updateDailyTaskProgress}
                 triggerAlert={triggerAlert}

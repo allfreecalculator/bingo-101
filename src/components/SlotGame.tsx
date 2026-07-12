@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Coins, Sparkles, RefreshCw, HelpCircle, Trophy, Volume2, VolumeX } from 'lucide-react';
+import { Coins, Sparkles, RefreshCw, HelpCircle, Trophy, Volume2, VolumeX, Zap, Hand, Play, Square } from 'lucide-react';
 
 interface SlotGameProps {
   chips: number;
@@ -30,6 +30,12 @@ export const SlotGame: React.FC<SlotGameProps> = ({
   const [bet, setBet] = useState<number>(20);
   const [spinning, setSpinning] = useState<boolean>(false);
   const [reelsSpinning, setReelsSpinning] = useState<boolean[]>([false, false, false]);
+  
+  // Custom states requested
+  const [isFastMode, setIsFastMode] = useState<boolean>(false);
+  const [autoSpinActive, setAutoSpinActive] = useState<boolean>(false);
+  const [autoSpinCount, setAutoSpinCount] = useState<number>(0);
+
   // Cylindrical reels: each reel displays 3 items vertically (top, middle/payline, bottom)
   const [reels, setReels] = useState<string[][]>([
     ['🍋', '🍒', '🍊'],
@@ -42,15 +48,61 @@ export const SlotGame: React.FC<SlotGameProps> = ({
   const [muted, setMuted] = useState<boolean>(false);
   const [spinHistory, setSpinHistory] = useState<string[]>([]);
 
+  // Safety tracking for staggered / manual stops
+  const targetsRef = useRef<string[]>(['🍋', '🍒', '🍊']);
+  const stoppedRef = useRef<boolean[]>([true, true, true]);
+  const stopTimersRef = useRef<any[]>([]);
+  const tickIntervalRef = useRef<any>(null);
+
+  // Clean up all timers on unmount
+  useEffect(() => {
+    return () => {
+      stopTimersRef.current.forEach(t => clearTimeout(t));
+      if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
+    };
+  }, []);
+
+  // Trigger next auto-spin cycle
+  useEffect(() => {
+    if (autoSpinActive && autoSpinCount > 0 && !spinning) {
+      if (chips < bet) {
+        triggerAlert('Insufficient chips to continue auto spins!', 'error');
+        setAutoSpinActive(false);
+        setAutoSpinCount(0);
+        return;
+      }
+      
+      const delay = isFastMode ? 300 : 800;
+      const timer = setTimeout(() => {
+        handleSpin();
+      }, delay);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [autoSpinActive, autoSpinCount, spinning, chips, bet, isFastMode]);
+
   // Web Audio Synth FX Engine
-  const playSound = (type: 'pull' | 'tick' | 'win' | 'lose') => {
+  const playSound = (type: 'pull' | 'tick' | 'win' | 'lose' | 'lever_grab') => {
     if (muted) return;
     try {
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioContext) return;
       const ctx = new AudioContext();
 
-      if (type === 'pull') {
+      if (type === 'lever_grab') {
+        // High frequency friction click
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(320, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.02, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } else if (type === 'pull') {
         // Heavy mechanical snap
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -123,6 +175,8 @@ export const SlotGame: React.FC<SlotGameProps> = ({
     if (spinning) return;
     if (chips < bet) {
       triggerAlert('Insufficient chips to spin the golden reels!', 'error');
+      setAutoSpinActive(false);
+      setAutoSpinCount(0);
       return;
     }
 
@@ -130,20 +184,21 @@ export const SlotGame: React.FC<SlotGameProps> = ({
     onUpdateChips(-bet);
     setSpinning(true);
     setReelsSpinning([true, true, true]);
+    stoppedRef.current = [false, false, false];
     setLastWin(null);
     onUpdateTask('play_slots', 1);
 
     // Audio / Visual triggers
     playSound('pull');
     setLeverPulled(true);
-    setTimeout(() => setLeverPulled(false), 450);
+    setTimeout(() => setLeverPulled(false), isFastMode ? 220 : 450);
 
     // TTS Voice Synthesizer
     if ('speechSynthesis' in window && !muted) {
       try {
         window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance('Spinning the golden reels!');
-        u.volume = 0.25;
+        const u = new SpeechSynthesisUtterance('Spinning!');
+        u.volume = 0.15;
         window.speechSynthesis.speak(u);
       } catch (e) {}
     }
@@ -152,49 +207,63 @@ export const SlotGame: React.FC<SlotGameProps> = ({
     const target1 = getRandomSymbol();
     const target2 = getRandomSymbol();
     const target3 = getRandomSymbol();
+    targetsRef.current = [target1, target2, target3];
 
-    // Start a single lightweight tick interval for audio feedback only (NO heavy state updates!)
+    // Clear any previous timers safely
+    stopTimersRef.current.forEach(t => clearTimeout(t));
+    if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
+
+    // Start tick audio feedback interval
     let ticks = 0;
-    const tickInterval = setInterval(() => {
+    const maxTicks = isFastMode ? 10 : 22;
+    const tickSpeed = isFastMode ? 45 : 90;
+    tickIntervalRef.current = setInterval(() => {
       playSound('tick');
       ticks++;
-      if (ticks > 22) clearInterval(tickInterval);
-    }, 90);
+      if (ticks >= maxTicks) clearInterval(tickIntervalRef.current);
+    }, tickSpeed);
 
-    // Staggered reel stops
-    setTimeout(() => {
-      setReelsSpinning(prev => [false, prev[1], prev[2]]);
-      setReels(prev => [
-        [getRandomSymbol(), target1, getRandomSymbol()],
-        prev[1],
-        prev[2]
-      ]);
-      playSound('pull');
-    }, 1000);
+    // Staggered stop delays based on speed multiplier
+    const delay1 = isFastMode ? 300 : 1000;
+    const delay2 = isFastMode ? 550 : 1600;
+    const delay3 = isFastMode ? 800 : 2200;
 
-    setTimeout(() => {
-      setReelsSpinning(prev => [prev[0], false, prev[2]]);
-      setReels(prev => [
-        prev[0],
-        [getRandomSymbol(), target2, getRandomSymbol()],
-        prev[2]
-      ]);
-      playSound('pull');
-    }, 1600);
+    const t1 = setTimeout(() => {
+      attemptStopReel(0);
+    }, delay1);
 
-    setTimeout(() => {
-      clearInterval(tickInterval);
-      setReelsSpinning([false, false, false]);
-      setReels(prev => [
-        prev[0],
-        prev[1],
-        [getRandomSymbol(), target3, getRandomSymbol()]
-      ]);
-      playSound('pull');
-      
-      // Calculate and reward
-      finalizeResults(target1, target2, target3);
-    }, 2200);
+    const t2 = setTimeout(() => {
+      attemptStopReel(1);
+    }, delay2);
+
+    const t3 = setTimeout(() => {
+      attemptStopReel(2);
+    }, delay3);
+
+    stopTimersRef.current = [t1, t2, t3];
+  };
+
+  const attemptStopReel = (reelIdx: number) => {
+    if (stoppedRef.current[reelIdx]) return; // Guard against multiple stop triggers (e.g. manual skill stop + scheduled timeout)
+
+    stoppedRef.current[reelIdx] = true;
+    setReelsSpinning(prev => {
+      const next = [...prev];
+      next[reelIdx] = false;
+      return next;
+    });
+    setReels(prev => {
+      const next = [...prev];
+      next[reelIdx] = [getRandomSymbol(), targetsRef.current[reelIdx], getRandomSymbol()];
+      return next;
+    });
+    playSound('pull');
+
+    // If all three drums are finalized, resolve payout
+    if (stoppedRef.current.every(val => val === true)) {
+      if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
+      finalizeResults(targetsRef.current[0], targetsRef.current[1], targetsRef.current[2]);
+    }
   };
 
   const finalizeResults = (r1: string, r2: string, r3: string) => {
@@ -232,7 +301,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
       if ('speechSynthesis' in window && !muted) {
         try {
           const u = new SpeechSynthesisUtterance(`Big win! You received ${payout} chips.`);
-          u.volume = 0.3;
+          u.volume = 0.25;
           u.pitch = 1.1;
           window.speechSynthesis.speak(u);
         } catch (e) {}
@@ -248,11 +317,40 @@ export const SlotGame: React.FC<SlotGameProps> = ({
     }
 
     setSpinning(false);
+
+    // Auto-spin count decrement handler
+    if (autoSpinActive && autoSpinCount > 0) {
+      setAutoSpinCount(prev => {
+        const next = prev - 1;
+        if (next === 0) {
+          setAutoSpinActive(false);
+          triggerAlert('Auto spins completed!', 'success');
+        }
+        return next;
+      });
+    }
   };
 
   const adjustBet = (amount: number) => {
     if (spinning) return;
     setBet(prev => Math.max(5, prev + amount));
+  };
+
+  const startAutoSpin = (count: number) => {
+    if (spinning) return;
+    if (chips < bet) {
+      triggerAlert('Insufficient chips to start auto spins!', 'error');
+      return;
+    }
+    setAutoSpinActive(true);
+    setAutoSpinCount(count);
+    handleSpin();
+  };
+
+  const stopAutoSpin = () => {
+    setAutoSpinActive(false);
+    setAutoSpinCount(0);
+    triggerAlert('Auto spin stopped', 'info');
   };
 
   return (
@@ -270,7 +368,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
           <h3 className="text-xl font-black tracking-tight text-white mt-2 flex items-center gap-2">
             🎰 Vegas Golden Reels
           </h3>
-          <p className="text-[10px] text-white/40 font-mono mt-0.5">Classic 3-drum mechanical slot simulator with staggered stops</p>
+          <p className="text-[10px] text-white/40 font-mono mt-0.5">Classic 3-drum mechanical slot simulator with skill manual stops & turbo spin</p>
         </div>
 
         <div className="flex gap-2">
@@ -350,7 +448,11 @@ export const SlotGame: React.FC<SlotGameProps> = ({
           {reels.map((reelSymbols, reelIdx) => (
             <div
               key={reelIdx}
-              className="bg-[#0f0f26]/80 border border-white/5 rounded-xl h-[170px] flex flex-col items-center justify-between py-2 relative overflow-hidden shadow-[inset_0_4px_15px_rgba(0,0,0,0.85)] select-none"
+              onClick={() => attemptStopReel(reelIdx)}
+              className={`bg-[#0f0f26]/80 border border-white/5 rounded-xl h-[170px] flex flex-col items-center justify-between py-2 relative overflow-hidden shadow-[inset_0_4px_15px_rgba(0,0,0,0.85)] select-none transition-all ${
+                reelsSpinning[reelIdx] ? 'cursor-pointer hover:border-amber-400/50 hover:bg-[#151535]' : ''
+              }`}
+              title={reelsSpinning[reelIdx] ? "Tap to Stop (Manual Override)" : undefined}
             >
               {/* Spherical top/bottom cylinder shading */}
               <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#04040a] to-transparent pointer-events-none z-10" />
@@ -358,13 +460,20 @@ export const SlotGame: React.FC<SlotGameProps> = ({
 
               {/* Ticker reels column items */}
               {reelsSpinning[reelIdx] ? (
-                <div className="flex flex-col items-center animate-reel-scroll filter blur-[2px] h-[340px] w-full justify-around select-none">
-                  {SPINNING_SYMBOLS.map((sym, idx) => (
-                    <div key={idx} className="flex items-center justify-center h-12 text-4xl">
-                      {sym}
-                    </div>
-                  ))}
-                </div>
+                <>
+                  <div className="flex flex-col items-center animate-reel-scroll filter blur-[2px] h-[340px] w-full justify-around select-none">
+                    {SPINNING_SYMBOLS.map((sym, idx) => (
+                      <div key={idx} className="flex items-center justify-center h-12 text-4xl">
+                        {sym}
+                      </div>
+                    ))}
+                  </div>
+                  {/* Skill manual-stop interactive overlay */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex flex-col items-center justify-center gap-1 transition-opacity duration-150 z-20">
+                    <Hand className="w-5 h-5 text-amber-400 animate-bounce" />
+                    <span className="text-[8px] font-mono font-black text-amber-300 tracking-wider">STOP REEL</span>
+                  </div>
+                </>
               ) : (
                 reelSymbols.map((symbol, symbolIdx) => {
                   const isMiddle = symbolIdx === 1;
@@ -389,7 +498,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
           ))}
         </div>
 
-        {/* Physical Mechanical Lever Arm widget */}
+        {/* Physical Mechanical Lever Arm widget - fully draggable for manual feel */}
         <div className="hidden sm:flex flex-col items-center justify-center w-12 h-[170px] relative bg-black/40 rounded-2xl border border-white/5 p-1 flex-shrink-0">
           <div className="absolute top-4 bottom-4 w-1 bg-zinc-800 rounded-full border border-zinc-700 shadow-inner" />
           
@@ -398,13 +507,25 @@ export const SlotGame: React.FC<SlotGameProps> = ({
 
           {/* Lever handle shaft and knob */}
           <motion.div
+            drag={spinning ? false : "y"}
+            dragConstraints={{ top: 0, bottom: 85 }}
+            dragElastic={0.15}
+            onDragStart={() => playSound('lever_grab')}
+            onDragEnd={(event, info) => {
+              if (info.offset.y > 45 && !spinning) {
+                handleSpin();
+              }
+            }}
             animate={leverPulled ? { y: [0, 85, 0] } : { y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center origin-bottom cursor-pointer z-20"
-            onClick={handleSpin}
+            transition={leverPulled ? { duration: isFastMode ? 0.22 : 0.45, ease: 'easeInOut' } : { type: 'spring', stiffness: 350, damping: 18 }}
+            className={`absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center origin-bottom z-20 ${
+              spinning ? 'cursor-not-allowed opacity-40' : 'cursor-grab active:cursor-grabbing hover:scale-105'
+            }`}
+            style={{ y: 0 }}
+            title={spinning ? "Locked while spinning" : "Pull with your hand to Spin!"}
           >
-            {/* Glossy red ball knob */}
-            <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-red-600 via-red-500 to-rose-400 border border-red-700 shadow-[0_0_12px_rgba(239,68,68,0.6)] active:scale-90 transition-transform" />
+            {/* Glossy red ball knob with hover effect */}
+            <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-red-600 via-red-500 to-rose-400 border border-red-700 shadow-[0_0_12px_rgba(239,68,68,0.6)] hover:shadow-[0_0_16px_rgba(239,68,68,0.8)] active:scale-90 transition-transform" />
             {/* Metallic handle rod */}
             <div className="w-1.5 h-16 bg-gradient-to-r from-zinc-400 via-zinc-200 to-zinc-500 border-x border-zinc-600 rounded-b-md shadow-md" />
           </motion.div>
@@ -412,8 +533,85 @@ export const SlotGame: React.FC<SlotGameProps> = ({
         </div>
       </div>
 
+      {/* Custom Speed & Auto Controls Panel requested by user */}
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10">
+        
+        {/* Speed Selector Panel (2x Turbo Speed Option) */}
+        <div className="bg-white/5 border border-white/5 p-3.5 rounded-2xl flex items-center justify-between">
+          <div>
+            <span className="block text-[9px] font-mono text-white/40 uppercase tracking-wider mb-1 font-bold">
+              Spin Speed Option
+            </span>
+            <span className="text-[11px] text-white/75 font-semibold flex items-center gap-1">
+              {isFastMode ? (
+                <>
+                  <Zap className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                  <span>Turbo Mode (2x Fast Speed)</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-white/40">🐢</span>
+                  <span>Classic Mechanical Speed</span>
+                </>
+              )}
+            </span>
+          </div>
+          <button
+            onClick={() => setIsFastMode(!isFastMode)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-all flex items-center gap-1.5 ${
+              isFastMode 
+                ? 'bg-amber-400 text-black border-amber-400 hover:bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
+                : 'bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <Zap className={`w-3 h-3 ${isFastMode ? 'fill-black' : ''}`} />
+            <span>{isFastMode ? '⚡ FAST' : '2X FAST'}</span>
+          </button>
+        </div>
+
+        {/* Auto-Spin Segmented Panel (10, 20, 50, 100, 250, 1000) */}
+        <div className="bg-white/5 border border-white/5 p-3.5 rounded-2xl flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="block text-[9px] font-mono text-white/40 uppercase tracking-wider font-bold flex items-center gap-1">
+              <Play className="w-2.5 h-2.5 fill-white/40 text-transparent" />
+              Auto Spins Controller
+            </span>
+            {autoSpinActive && (
+              <span className="text-[10px] font-mono text-emerald-400 font-bold animate-pulse flex items-center gap-1">
+                <span>● Running</span>
+                <span className="bg-emerald-500/10 px-1.5 py-0.5 rounded text-emerald-300">{autoSpinCount} left</span>
+              </span>
+            )}
+          </div>
+          
+          {autoSpinActive ? (
+            <button
+              onClick={stopAutoSpin}
+              className="w-full py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-mono font-bold text-xs rounded-lg transition-all flex items-center justify-center gap-1.5"
+            >
+              <Square className="w-3 h-3 fill-red-400 text-transparent" />
+              <span>STOP AUTO SPIN</span>
+            </button>
+          ) : (
+            <div className="flex gap-1">
+              {[10, 20, 50, 100, 250, 1000].map(count => (
+                <button
+                  key={count}
+                  onClick={() => startAutoSpin(count)}
+                  disabled={spinning}
+                  className="flex-1 py-1.5 bg-white/5 hover:bg-amber-400/25 border border-white/10 text-white/80 hover:text-amber-300 font-mono text-[10px] font-black rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  title={`Run ${count} Auto Spins`}
+                >
+                  {count}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Outcome Banner */}
-      <div className="mt-4 text-center min-h-[44px] flex items-center justify-center">
+      <div className="mt-4 text-center min-h-[44px] flex items-center justify-center relative z-10">
         <AnimatePresence mode="wait">
           {lastWin !== null && (
             <motion.div
@@ -444,7 +642,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
 
       {/* Recent Activity Log Panel */}
       {spinHistory.length > 0 && (
-        <div className="mt-4 bg-black/20 rounded-xl p-3 border border-white/5 text-center">
+        <div className="mt-4 bg-black/20 rounded-xl p-3 border border-white/5 text-center relative z-10">
           <span className="block text-[8px] font-mono text-white/30 uppercase tracking-widest font-black mb-2">
             Reel Outcome Log
           </span>
@@ -462,7 +660,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
       )}
 
       {/* Betting Controls Dashboard */}
-      <div className="mt-5 flex flex-col sm:flex-row gap-4 items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5">
+      <div className="mt-5 flex flex-col sm:flex-row gap-4 items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5 relative z-10">
         <div className="flex items-center gap-4">
           <div>
             <span className="block text-[9px] font-mono text-white/40 uppercase tracking-wider mb-1">
