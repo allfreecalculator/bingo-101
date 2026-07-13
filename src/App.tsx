@@ -44,6 +44,14 @@ import { CoinPusherGame } from './components/CoinPusherGame';
 import { LimboGame } from './components/LimboGame';
 import { SpaceShooterGame } from './components/SpaceShooterGame';
 import { BaccaratGame } from './components/BaccaratGame';
+import { DartsGame } from './components/DartsGame';
+import { PinataGame } from './components/PinataGame';
+import { VaultGame } from './components/VaultGame';
+import { MonteGame } from './components/MonteGame';
+import { TarotGame } from './components/TarotGame';
+import { BowlingGame } from './components/BowlingGame';
+import { DragRaceGame } from './components/DragRaceGame';
+import { SolitaireGame } from './components/SolitaireGame';
 import { PolicyDocuments } from './components/PolicyDocuments';
 import { 
   Coins, 
@@ -71,7 +79,9 @@ import {
   Lock,
   Mail,
   UserPlus,
-  Loader2
+  Loader2,
+  ArrowLeft,
+  Search
 } from 'lucide-react';
 import { 
   auth, 
@@ -91,6 +101,41 @@ import {
 } from 'firebase/auth';
 
 const AVATARS = ['💎', '🃏', '🎲', '👑', '🍀', '💰', '🍒', '🎩', '🦖'];
+
+const CASINO_GAMES = [
+  { id: 'BINGO', name: '🎟️ Classic Bingo', desc: '75-Ball classic bingo floor with custom speed & voice calling', category: 'specialty', badge: 'POPULAR' },
+  { id: 'SLOTS', name: '🎰 Vegas Slots', desc: 'Spin golden reels & win massive chip jackpots', category: 'slots', badge: 'HOT' },
+  { id: 'DICE', name: '🎲 Dice Duel', desc: 'Roll the bones in an intense showdown vs House Dealer', category: 'tables', badge: 'FAVORITE' },
+  { id: 'CRASH', name: '🚀 Rocket Crash', desc: 'Cash out before the rocket crashes for exponential payouts', category: 'multipliers', badge: 'TRENDING' },
+  { id: 'MINES', name: '💣 Mines Floor', desc: 'Dodge active mines for consecutive cash out multipliers', category: 'multipliers', badge: 'NEW' },
+  { id: 'PLINKO', name: '🎯 Cosmic Plinko', desc: 'Drop pegs onto dynamic high-multiplier pegboards', category: 'multipliers', badge: 'POPULAR' },
+  { id: 'HILO', name: '🔥 Hi-Lo Duel', desc: 'Predict if the next drawn card is higher or lower', category: 'tables', badge: 'EASY' },
+  { id: 'ROULETTE', name: '🎡 Neon Roulette', desc: 'Bet on numbers, colors, or ranges in this classic wheel', category: 'tables', badge: 'CLASSIC' },
+  { id: 'BLACKJACK', name: '🃏 Vegas 21', desc: 'Draw cards and beat the dealer without exceeding 21', category: 'tables', badge: 'VIP' },
+  { id: 'POKER', name: '♠️ Video Poker', desc: 'Draw Jacks or Better to secure premium payout tiers', category: 'tables', badge: 'SKILL' },
+  { id: 'KENO', name: '✨ Cosmic Keno', desc: 'Select hot numbers to match live casino draws', category: 'specialty', badge: 'CLASSIC' },
+  { id: 'SNAKE', name: '🎮 Cosmic Snake', desc: 'Neon arcade snake eating chips to increase multipliers', category: 'specialty', badge: 'ARCADE' },
+  { id: 'COINFLIP', name: '🪙 Neon Coin Toss', desc: 'Predict heads or tails to build multiplier streaks', category: 'multipliers', badge: 'INSTANT' },
+  { id: 'WHEEL', name: '🎡 Dream Mega Wheel', desc: 'Spin the probability wedges for instant prize values', category: 'specialty', badge: 'POPULAR' },
+  { id: 'TOWER', name: '🏰 Tower Climb', desc: 'Climb high-risk ladders while avoiding game over tiles', category: 'multipliers', badge: 'HIGH RISK' },
+  { id: 'SCRATCH', name: '🎫 Cosmic Scratchers', desc: 'Scratch & match 3 cards for instant-win multipliers', category: 'specialty', badge: 'INSTANT' },
+  { id: 'RPS', name: '⚔️ RPS Showdown', desc: 'Vegas Rock-Paper-Scissors against advanced AI Dealer', category: 'specialty', badge: 'DUEL' },
+  { id: 'SHELL', name: '🔮 Golden Shells', desc: 'Keep your eyes on the shells to find the hidden diamond', category: 'specialty', badge: 'FOCUS' },
+  { id: 'DERBY', name: '🐎 Cyber Derby', desc: 'Place your wagers on high-speed virtual neon horse racing', category: 'specialty', badge: 'SIMULATION' },
+  { id: 'DRAGON_TIGER', name: '🐉 Dragon Tiger', desc: 'Choose between Dragon, Tiger, or Tie in high-speed card duels', category: 'tables', badge: 'FAST' },
+  { id: 'PUSHER', name: '🪙 Coin Pusher', desc: 'Drop coins onto moving ledges and cascade massive chip piles', category: 'specialty', badge: 'COIN PUSHER' },
+  { id: 'LIMBO', name: '🚀 Limbo Roll', desc: 'Specify target payout multiplier and roll instant targets', category: 'multipliers', badge: 'INSTANT' },
+  { id: 'SHOOTER', name: '☄️ Space Shooter', desc: 'Steer space fighter and shoot asteroids to stack multipliers', category: 'specialty', badge: 'ARCADE' },
+  { id: 'BACCARAT', name: '👑 Baccarat Royale', desc: 'Bet on Banker, Player, or Tie in classic high roller card play', category: 'tables', badge: 'VIP' },
+  { id: 'DARTS', name: '🎯 Neon Darts', desc: 'Aim, throw, and brave atmospheric winds to hit the double bullseye', category: 'specialty', badge: 'NEW' },
+  { id: 'PINATA', name: '🪅 Cosmic Piñata', desc: 'Buy contract swings to crack open a floating galaxy piñata', category: 'specialty', badge: 'DAILY' },
+  { id: 'VAULT', name: '📦 Vault Escape', desc: 'Drill and unlock 5 levels of digital safes while evading alarms', category: 'multipliers', badge: 'HOT' },
+  { id: 'MONTE', name: '🃏 Three-Card Monte', desc: 'Watch the holographic cards shuffle and locate the Golden Queen', category: 'tables', badge: 'NEW' },
+  { id: 'TAROT', name: '🔮 Mystic Tarot', desc: 'Draw three cards of fate to build multiplying fortune structures', category: 'specialty', badge: 'DAILY' },
+  { id: 'BOWLING', name: '🎳 Cosmic Bowling', desc: 'Lock aim angle & delivery power to knock down neon pin spreads', category: 'specialty', badge: 'ARCADE' },
+  { id: 'DRAGRACE', name: '🏎️ Cyber Drag Race', desc: 'Gear shift at perfect engine RPM speeds to outrun rival drag racers', category: 'specialty', badge: 'NEW' },
+  { id: 'SOLITAIRE', name: '🀄 Solitaire Match', desc: 'Flip and match 8 pairs of card symbols within the 25-second countdown', category: 'tables', badge: 'DAILY' }
+] as const;
 
 const INITIAL_DAILY_TASKS: DailyTask[] = [
   {
@@ -375,7 +420,7 @@ export default function App() {
 
   // --- Game Settings ---
   const [gameState, setGameState] = useState<GameState>(GameState.LOBBY);
-  const [activeLobbyTab, setActiveLobbyTab] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS' | 'SHELL' | 'DERBY' | 'DRAGON_TIGER' | 'PUSHER' | 'LIMBO' | 'SHOOTER' | 'BACCARAT'>('BINGO');
+  const [activeLobbyTab, setActiveLobbyTab] = useState<string>('BINGO');
   const [activeGame, setActiveGame] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'slots' | 'tables' | 'multipliers' | 'specialty'>('all');
@@ -637,7 +682,7 @@ export default function App() {
 
   // --- Casino Action Logging Engine ---
   const trackGameAction = (
-    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS' | 'SHELL' | 'DERBY' | 'DRAGON_TIGER' | 'PUSHER' | 'LIMBO' | 'SHOOTER' | 'BACCARAT',
+    game: string,
     delta: number,
     description: string
   ) => {
@@ -685,7 +730,7 @@ export default function App() {
         BACCARAT: { played: 0, won: 0, bet: 0, wonChips: 0, maxWin: 0 }
       };
 
-      const gameStats = stats[game];
+      const gameStats = (stats as any)[game];
       if (gameStats) {
         if (delta < 0) {
           gameStats.played += 1;
@@ -703,7 +748,7 @@ export default function App() {
   };
 
   const handleUpdateChipsWithLog = (
-    game: 'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS' | 'SHELL' | 'DERBY' | 'DRAGON_TIGER' | 'PUSHER' | 'LIMBO' | 'SHOOTER' | 'BACCARAT',
+    game: string,
     delta: number,
     description?: string
   ) => {
@@ -1161,75 +1206,211 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className={`mx-auto transition-all duration-300 ${activeGame !== null ? 'w-full max-w-none p-0 sm:p-4' : 'max-w-7xl px-4 sm:px-6 py-8 animate-fade-in'}`}>
         
         {/* LOBBY GAME SCREEN */}
         {gameState === GameState.LOBBY && (
           <div className="space-y-8">
             {/* Promo Header banner */}
-            <div className="bg-gradient-to-r from-amber-500/10 via-[#0a0a1f]/80 to-blue-500/5 border border-white/10 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-6 shadow-2xl">
-              <div className="space-y-1 text-center md:text-left">
-                <span className="text-[10px] bg-amber-400 text-black font-black uppercase font-mono tracking-widest px-2.5 py-0.5 rounded-full">Learn & Play 101</span>
-                <h2 className="text-2xl font-bold tracking-tight text-white mt-1">Get Started at the Casino Floor</h2>
-                <p className="text-xs text-white/50 max-w-lg leading-relaxed">
-                  Try your luck across the casino floor! Play standard classical 75-Ball Bingo, roll the bones in Dice Duel, or spin the reels in the Golden Vegas Slots!
-                </p>
+            {activeGame === null && (
+              <div className="bg-gradient-to-r from-amber-500/10 via-[#0a0a1f]/80 to-blue-500/5 border border-white/10 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-6 shadow-2xl">
+                <div className="space-y-1 text-center md:text-left">
+                  <span className="text-[10px] bg-amber-400 text-black font-black uppercase font-mono tracking-widest px-2.5 py-0.5 rounded-full">Learn & Play 101</span>
+                  <h2 className="text-2xl font-bold tracking-tight text-white mt-1">Get Started at the Casino Floor</h2>
+                  <p className="text-xs text-white/50 max-w-lg leading-relaxed">
+                    Try your luck across the casino floor! Play standard classical 75-Ball Bingo, roll the bones in Dice Duel, or spin the reels in the Golden Vegas Slots!
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsAcademyOpen(true)}
+                  className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs transition-all tracking-wider shadow-lg active:scale-95 cursor-pointer"
+                >
+                  <BookOpen className="w-4 h-4" /> LEARN BINGO 101
+                </button>
               </div>
-              <button
-                onClick={() => setIsAcademyOpen(true)}
-                className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs transition-all tracking-wider shadow-lg active:scale-95 cursor-pointer"
-              >
-                <BookOpen className="w-4 h-4" /> LEARN BINGO 101
-              </button>
-            </div>
+            )}
 
-            {/* Interactive Casino Game Lobby Selector Tabs */}
-            <div className="flex flex-wrap gap-3 bg-[#0a0a1f]/80 p-2 rounded-2xl border border-white/10">
-              {[
-                { tab: 'BINGO', label: '🎟️ Bingo Floor', desc: '75-Ball classic' },
-                { tab: 'SLOTS', label: '🎰 Vegas Slots', desc: 'Spin & Win' },
-                { tab: 'DICE', label: '🎲 Dice Duel', desc: 'VS House Dealer' },
-                { tab: 'CRASH', label: '🚀 Rocket Crash', desc: 'Exponential multiplier' },
-                { tab: 'MINES', label: '💣 Mines Floor', desc: 'Dodge & Multiplier' },
-                { tab: 'PLINKO', label: '🎯 Cosmic Plinko', desc: 'Pegboard Multipliers' },
-                { tab: 'HILO', label: '🔥 Hi-Lo Duel', desc: 'Predict Higher/Lower' },
-                { tab: 'ROULETTE', label: '🎡 Neon Roulette', desc: 'Interactive Wheel' },
-                { tab: 'BLACKJACK', label: '🃏 Vegas 21', desc: 'Classic Cards' },
-                { tab: 'POKER', label: '♠️ Video Poker', desc: 'Draw Jacks or Better' },
-                { tab: 'KENO', label: '✨ Cosmic Keno', desc: 'Vegas Number Board' },
-                { tab: 'SNAKE', label: '🎮 Cosmic Snake', desc: 'Neon Arcade Snake' },
-                { tab: 'COINFLIP', label: '🪙 Neon Coin Toss', desc: 'Streak Multipliers' },
-                { tab: 'WHEEL', label: '🎡 Dream Mega Wheel', desc: 'Probability Wedge' },
-                { tab: 'TOWER', label: '🏰 Neon Tower Climb', desc: 'Climb Risk Ladder' },
-                { tab: 'SCRATCH', label: '🎫 Cosmic Scratchers', desc: 'Instawin Match 3 Cards' },
-                { tab: 'RPS', label: '⚔️ RPS Showdown', desc: 'Cosmic AI Duel' },
-                { tab: 'SHELL', label: '🔮 Golden Shells', desc: 'Find Hidden Diamond' },
-                { tab: 'DERBY', label: '🐎 Cyber Derby', desc: 'Virtual Horse Race' },
-                { tab: 'DRAGON_TIGER', label: '🐉 Dragon Tiger', desc: 'High-speed card duel' },
-                { tab: 'PUSHER', label: '🪙 Coin Pusher', desc: 'Slide & Push Ledge' },
-                { tab: 'LIMBO', label: '🚀 Limbo Roll', desc: 'Instant Multipliers' },
-                { tab: 'SHOOTER', label: '☄️ Space Shooter', desc: 'Dodge Asteroids' },
-                { tab: 'BACCARAT', label: '👑 Baccarat Royale', desc: 'Vegas High Roller' }
-              ].map((t) => {
-                const isActive = activeLobbyTab === t.tab;
-                return (
+            {/* Active Game Top Bar OR Lobby Selection Cards Grid */}
+            {activeGame !== null ? (
+              /* FLOATING/STICKY DEDICATED TOP BAR FOR ACTIVE GAME */
+              <div className="sticky top-0 z-40 bg-[#0a0a1f]/95 backdrop-blur-md border border-white/10 p-3 sm:p-4 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-row justify-between items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-4 text-left">
                   <button
-                    key={t.tab}
-                    onClick={() => setActiveLobbyTab(t.tab as any)}
-                    className={`flex-1 min-w-[140px] px-4 py-3 rounded-xl border text-left transition-all flex flex-col justify-center cursor-pointer ${
-                      isActive
-                        ? 'bg-amber-400 border-amber-300 text-black shadow-md shadow-amber-400/10'
-                        : 'bg-white/5 border-transparent text-white/60 hover:border-white/10 hover:text-white'
-                    }`}
+                    onClick={() => {
+                      if (activeGame === 'BINGO') {
+                        handleEndGameAndBackToLobby();
+                      } else {
+                        setActiveGame(null);
+                      }
+                    }}
+                    className="flex items-center gap-1 sm:gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-white/80 hover:text-white transition-all cursor-pointer"
                   >
-                    <span className="text-xs font-black uppercase tracking-wider">{t.label}</span>
-                    <span className={`text-[9px] font-mono ${isActive ? 'text-black/60 font-semibold' : 'text-white/40'}`}>
-                      {t.desc}
-                    </span>
+                    <ArrowLeft className="w-4 h-4" />
+                    <span className="hidden sm:inline">Back to Lobby</span>
+                    <span className="sm:hidden">Exit</span>
                   </button>
-                );
-              })}
-            </div>
+                  
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <span className="text-lg sm:text-xl">
+                      {CASINO_GAMES.find(g => g.id === activeGame)?.name.split(' ')[0] || '🎮'}
+                    </span>
+                    <div>
+                      <h2 className="text-xs sm:text-sm font-black uppercase text-white tracking-wide">
+                        {CASINO_GAMES.find(g => g.id === activeGame)?.name.substring(CASINO_GAMES.find(g => g.id === activeGame)?.name.indexOf(' ') + 1) || activeGame}
+                      </h2>
+                      <span className="hidden sm:block text-[9px] text-white/40 font-mono uppercase tracking-widest">
+                        {CASINO_GAMES.find(g => g.id === activeGame)?.category} Game
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Wallet & Level Display */}
+                <div className="flex items-center gap-1.5 sm:gap-3">
+                  <div className="flex items-center gap-1 sm:gap-1.5 bg-amber-400/10 px-2.5 sm:px-3 py-1.5 rounded-xl border border-amber-400/20 shadow-inner">
+                    <Coins className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+                    <span className="text-xs font-mono font-black text-amber-400">
+                      {profile.chips}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-1 bg-white/5 px-2.5 py-1.5 rounded-xl border border-white/10">
+                    <span className="text-xs font-bold font-mono text-white/80">Lvl {profile.level}</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* THE LOBBY VIEW - SEARCH, CATEGORIES & BEAUTIFUL RESPONSIVE CARDS GRID */
+              <div className="space-y-8">
+                {/* Filter categories & Search bar */}
+                <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-[#0a0a1f]/80 p-4 rounded-3xl border border-white/10 shadow-lg">
+                  {/* Category Pill Buttons */}
+                  <div className="flex flex-wrap gap-2 w-full md:w-auto">
+                    {[
+                      { id: 'all', label: '🚀 All Games' },
+                      { id: 'slots', label: '🎰 Slots' },
+                      { id: 'tables', label: '🃏 Table Games' },
+                      { id: 'multipliers', label: '📈 Multipliers' },
+                      { id: 'specialty', label: '🔮 Specialty' }
+                    ].map(cat => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setSelectedCategory(cat.id as any)}
+                        className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                          selectedCategory === cat.id
+                            ? 'bg-amber-400 border-amber-300 text-black shadow-md shadow-amber-400/20'
+                            : 'bg-white/5 border-transparent text-white/60 hover:border-white/10 hover:text-white'
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Search input */}
+                  <div className="relative w-full md:w-80">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                    <input
+                      type="text"
+                      placeholder="Search 24+ Vegas games..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl pl-11 pr-4 py-2.5 text-xs font-semibold text-white placeholder-white/35 focus:outline-none focus:border-amber-400 transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Grid of games cards */}
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <div className="text-left">
+                      <h3 className="text-sm font-bold uppercase tracking-wider text-white/80 flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" /> Popular Slots & Tables
+                      </h3>
+                      <p className="text-[10px] text-white/40 font-mono">CHOOSE FROM THE CASINO GAMES LIST</p>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-amber-400/80 bg-amber-400/10 px-3 py-1 rounded-lg border border-amber-400/20">
+                      {CASINO_GAMES.length} GAMES
+                    </span>
+                  </div>
+
+                  {/* Cards Render */}
+                  {(() => {
+                    const filteredGames = CASINO_GAMES.filter(game => {
+                      const matchesSearch = game.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                            game.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                      const matchesCategory = selectedCategory === 'all' || game.category === selectedCategory;
+                      return matchesSearch && matchesCategory;
+                    });
+
+                    if (filteredGames.length === 0) {
+                      return (
+                        <div className="text-center py-12 bg-white/5 border border-white/5 border-dashed rounded-3xl space-y-3">
+                          <HelpCircle className="w-8 h-8 text-white/20 mx-auto" />
+                          <p className="text-xs text-white/40 font-mono">No casino games matched "{searchQuery}"</p>
+                          <button 
+                            type="button"
+                            onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }} 
+                            className="text-xs text-amber-400 font-bold underline"
+                          >
+                            Reset filters
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                        {filteredGames.map((game) => (
+                          <motion.div
+                            key={game.id}
+                            whileHover={{ scale: 1.02, y: -4 }}
+                            className="bg-gradient-to-b from-[#0a0a1f] to-[#050510] border border-white/10 hover:border-amber-400/40 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xl hover:shadow-[0_0_20px_rgba(245,158,11,0.05)] transition-all group relative overflow-hidden text-left"
+                          >
+                            <div className="absolute -right-10 -top-10 w-24 h-24 bg-amber-400/5 rounded-full blur-xl group-hover:bg-amber-400/10 transition-colors pointer-events-none" />
+                            
+                            <div className="space-y-2">
+                              <div className="flex justify-between items-start">
+                                {game.badge && (
+                                  <span className={`text-[9px] font-extrabold uppercase font-mono px-2 py-0.5 rounded-md tracking-wider ${
+                                    game.badge === 'HOT' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
+                                    game.badge === 'NEW' ? 'bg-teal-500/20 text-teal-400 border border-teal-500/30' :
+                                    game.badge === 'VIP' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
+                                    game.badge === 'TRENDING' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
+                                    'bg-amber-400/20 text-amber-400 border border-amber-400/30'
+                                  }`}>
+                                    {game.badge}
+                                  </span>
+                                )}
+                                <span className="text-white/20 text-[10px] font-mono uppercase tracking-widest">{game.category}</span>
+                              </div>
+                              
+                              <h3 className="text-base font-bold text-white group-hover:text-amber-400 transition-colors">{game.name}</h3>
+                              <p className="text-[11px] text-white/50 leading-relaxed line-clamp-2">{game.desc}</p>
+                            </div>
+                            
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveLobbyTab(game.id as any);
+                                setActiveGame(game.id);
+                              }}
+                              className="w-full py-2.5 rounded-xl bg-white/5 group-hover:bg-amber-400 group-hover:text-black border border-white/10 group-hover:border-amber-300 text-xs font-extrabold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                            >
+                              PLAY NOW <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                            </button>
+                          </motion.div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {/* Conditional Game Views wrapped inside dynamic container styling */}
+            <div className={activeGame !== null ? "w-full bg-[#050510]/50 border border-white/5 sm:border-white/10 p-2 sm:p-6 rounded-2xl sm:rounded-3xl shadow-3xl min-h-[450px] flex flex-col justify-center text-left" : "hidden"}>
 
             {/* Conditional Game Views */}
             {activeLobbyTab === 'SLOTS' && (
@@ -1508,6 +1689,102 @@ export default function App() {
               />
             )}
 
+            {activeLobbyTab === 'DARTS' && (
+              <DartsGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Neon Darts: Hit target! Won +${delta} Chips! 🎯` : `Neon Darts throw: Placed ${Math.abs(delta)} Chip bet`;
+                  handleUpdateChipsWithLog('DARTS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'PINATA' && (
+              <PinataGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Cosmic Piñata Splatter: Won +${delta} Chips! 🪅` : `Cosmic Piñata contract: Placed ${Math.abs(delta)} Chip contract wager`;
+                  handleUpdateChipsWithLog('PINATA', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'VAULT' && (
+              <VaultGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Vault Escape cashout: Won +${delta} Chips! 📦` : `Vault Escape heist: Lost ${Math.abs(delta)} Chips`;
+                  handleUpdateChipsWithLog('VAULT', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'MONTE' && (
+              <MonteGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Three-Card Monte: Found Gold Queen! Won +${delta} Chips! 👑` : `Three-Card Monte: Lost ${Math.abs(delta)} Chips`;
+                  handleUpdateChipsWithLog('MONTE', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'TAROT' && (
+              <TarotGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Mystic Tarot draw: Won +${delta} Chips! 🔮` : `Mystic Tarot reading: Placed ${Math.abs(delta)} Chip wager`;
+                  handleUpdateChipsWithLog('TAROT', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'BOWLING' && (
+              <BowlingGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Cosmic Bowling frame: Won +${delta} Chips! 🎳` : `Cosmic Bowling roll: Placed ${Math.abs(delta)} Chip wager`;
+                  handleUpdateChipsWithLog('BOWLING', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'DRAGRACE' && (
+              <DragRaceGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Cyber Drag Race winner: Won +${delta} Chips! 🏎️` : `Cyber Drag Race track: Placed ${Math.abs(delta)} Chip wager`;
+                  handleUpdateChipsWithLog('DRAGRACE', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'SOLITAIRE' && (
+              <SolitaireGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Solitaire Match clearing: Won +${delta} Chips! 🀄` : `Solitaire Match entry: Placed ${Math.abs(delta)} Chip wager`;
+                  handleUpdateChipsWithLog('SOLITAIRE', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
             {activeLobbyTab === 'BINGO' && (
               /* Quick Lobby Setup Panel & Buy Desk */
               <div className="grid lg:grid-cols-[1.5fr_1fr] gap-8 animate-fade-in">
@@ -1698,21 +1975,66 @@ export default function App() {
               </div>
             )}
 
+            </div>
+
+            {/* "SHOW DOWN MORE GAME SHOW" - HORIZONTAL CAROUSEL OF OTHER CASINO GAMES */}
+            {activeGame !== null && (
+              <div className="bg-[#0a0a1f]/60 border border-white/10 p-5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
+                <div className="flex justify-between items-center text-left">
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 fill-current text-amber-400 animate-pulse" /> Play Other Casino Games
+                    </h3>
+                    <p className="text-[10px] text-white/40 font-mono uppercase">Single tap to jump directly into full-screen action</p>
+                  </div>
+                </div>
+                
+                {/* Horizontal scroll list */}
+                <div className="flex gap-4 overflow-x-auto pb-3 pt-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                  {CASINO_GAMES.filter(g => g.id !== activeGame).map((g) => (
+                    <button
+                      key={g.id}
+                      type="button"
+                      onClick={() => {
+                        if (activeGame === 'BINGO') {
+                          handleEndGameAndBackToLobby();
+                        }
+                        setActiveGame(g.id);
+                        setActiveLobbyTab(g.id);
+                        triggerAlert(`Switched to ${g.name}!`, 'info');
+                      }}
+                      className="flex-shrink-0 w-44 p-3.5 bg-[#0a0a1f]/90 border border-white/5 hover:border-amber-400/30 rounded-2xl text-left transition-all hover:bg-white/5 flex flex-col justify-between h-24 cursor-pointer group"
+                    >
+                      <div>
+                        <span className="text-xs font-black text-white block truncate group-hover:text-amber-400 transition-colors">{g.name}</span>
+                        <span className="text-[8px] font-mono text-white/40 block mt-0.5 uppercase tracking-wider">{g.category}</span>
+                      </div>
+                      <span className="text-[9px] text-amber-400 font-bold self-end font-mono">
+                        PLAY NOW →
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Bento Grid: Daily Quests, Analytics, Lucky Wheel & Leaderboard */}
-            <CasinoStats 
-              profile={profile} 
-              onAddChips={(amount) => {
-                setProfile(prev => ({
-                  ...prev,
-                  chips: prev.chips + amount
-                }));
-                triggerAlert(`Added ${amount} chips from Lucky Wheel!`, 'success');
-              }} 
-              tasks={profile.dailyTasks || []}
-              onClaimTask={handleClaimDailyTask}
-              onAddTask={handleAddCustomTask}
-              onProgressTask={handleProgressCustomTask}
-            />
+            {activeGame === null && (
+              <CasinoStats 
+                profile={profile} 
+                onAddChips={(amount) => {
+                  setProfile(prev => ({
+                    ...prev,
+                    chips: prev.chips + amount
+                  }));
+                  triggerAlert(`Added ${amount} chips from Lucky Wheel!`, 'success');
+                }} 
+                tasks={profile.dailyTasks || []}
+                onClaimTask={handleClaimDailyTask}
+                onAddTask={handleAddCustomTask}
+                onProgressTask={handleProgressCustomTask}
+              />
+            )}
           </div>
         )}
 
