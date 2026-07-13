@@ -183,6 +183,44 @@ const checkAndResetDailyTasks = (p: PlayerProfile): PlayerProfile => {
   return p;
 };
 
+interface GameCard {
+  id: string;
+  title: string;
+  emoji: string;
+  desc: string;
+  badge?: string;
+  category: 'slots' | 'tables' | 'multipliers' | 'specialty';
+  bgColor: string;
+  payout: string;
+}
+
+const GAMES: GameCard[] = [
+  { id: 'BINGO', title: 'Bingo Floor', emoji: '🎟️', desc: '75-Ball classical Bingo games', badge: 'Popular', category: 'specialty', bgColor: 'from-blue-600/20 to-indigo-600/20 border-blue-500/30', payout: 'Up to 15x' },
+  { id: 'SLOTS', title: 'Vegas Slots', emoji: '🎰', desc: 'Spin & Win the Golden Reels', badge: 'Hot', category: 'slots', bgColor: 'from-amber-600/20 to-red-600/20 border-amber-500/30', payout: 'Up to 1000x' },
+  { id: 'CRASH', title: 'Rocket Crash', emoji: '🚀', desc: 'Exponential multipliers space flight', badge: 'Trending', category: 'multipliers', bgColor: 'from-purple-600/20 to-indigo-600/20 border-purple-500/30', payout: 'Unlimited' },
+  { id: 'MINES', title: 'Mines Floor', desc: 'Dodge mines and collect multiplier tiles', emoji: '💣', category: 'multipliers', bgColor: 'from-red-600/20 to-zinc-800/20 border-red-500/30', payout: 'Up to 500x' },
+  { id: 'BLACKJACK', title: 'Vegas 21', emoji: '🃏', desc: 'Classic Vegas Blackjack vs Dealer', badge: 'VIP Floor', category: 'tables', bgColor: 'from-emerald-600/20 to-teal-800/20 border-emerald-500/30', payout: '3:2 Payout' },
+  { id: 'ROULETTE', title: 'Neon Roulette', emoji: '🎡', desc: 'Interactive live-wheel European roulette', category: 'slots', bgColor: 'from-indigo-600/20 to-purple-800/20 border-indigo-500/30', payout: '35:1 Payout' },
+  { id: 'BACCARAT', title: 'Baccarat Royale', emoji: '👑', desc: 'Vegas high roller baccarat tables', category: 'tables', bgColor: 'from-yellow-600/20 to-amber-800/20 border-yellow-500/30', payout: '9:1 Payout' },
+  { id: 'PLINKO', title: 'Cosmic Plinko', emoji: '🎯', desc: 'Pegboard bouncing gravity multipliers', category: 'specialty', bgColor: 'from-teal-600/20 to-cyan-800/20 border-teal-500/30', payout: 'Up to 110x' },
+  { id: 'DICE', title: 'Dice Duel', emoji: '🎲', desc: 'Roll bones vs dealer in 3D Dice', category: 'specialty', bgColor: 'from-rose-600/20 to-orange-800/20 border-rose-500/30', payout: 'Up to 6x' },
+  { id: 'HILO', title: 'Hi-Lo Duel', emoji: '🔥', desc: 'Predict card values higher or lower', category: 'specialty', bgColor: 'from-orange-600/20 to-red-800/20 border-orange-500/30', payout: 'Multiplier' },
+  { id: 'POKER', title: 'Video Poker', emoji: '♠️', desc: 'Draw poker hands with Jacks or Better', category: 'tables', bgColor: 'from-sky-600/20 to-blue-800/20 border-sky-500/30', payout: 'Up to 800x' },
+  { id: 'KENO', title: 'Cosmic Keno', emoji: '✨', desc: 'Pick lucky numbers in Vegas board', category: 'specialty', bgColor: 'from-fuchsia-600/20 to-pink-800/20 border-fuchsia-500/30', payout: 'Up to 10000x' },
+  { id: 'SNAKE', title: 'Cosmic Snake', emoji: '🎮', desc: 'Neon retro arcade snake chips eat', badge: 'Retro', category: 'specialty', bgColor: 'from-green-600/20 to-emerald-800/20 border-green-500/30', payout: 'Multiplier' },
+  { id: 'COINFLIP', title: 'Neon Coin Toss', emoji: '🪙', desc: 'Streak coin toss prediction rewards', category: 'specialty', bgColor: 'from-yellow-600/20 to-orange-800/20 border-yellow-500/30', payout: 'Streak' },
+  { id: 'WHEEL', title: 'Dream Mega Wheel', emoji: '🎡', desc: 'Wedge-based fortune multiplier wheel', category: 'slots', bgColor: 'from-violet-600/20 to-indigo-800/20 border-violet-500/30', payout: 'Up to 40x' },
+  { id: 'TOWER', title: 'Tower Climb', emoji: '🏰', desc: 'Climb safety ladder and avoid traps', category: 'multipliers', bgColor: 'from-emerald-600/20 to-green-800/20 border-emerald-500/30', payout: 'Up to 150x' },
+  { id: 'SCRATCH', title: 'Cosmic Scratchers', emoji: '🎫', desc: 'Scratch gold foil cards to match 3', category: 'specialty', bgColor: 'from-pink-600/20 to-purple-800/20 border-pink-500/30', payout: 'Up to 500x' },
+  { id: 'RPS', title: 'RPS Showdown', emoji: '⚔️', desc: 'Rock paper scissors duel vs advanced AI', category: 'specialty', bgColor: 'from-slate-600/20 to-zinc-800/20 border-slate-500/30', payout: 'Double' },
+  { id: 'SHELL', title: 'Golden Shells', emoji: '🔮', desc: 'Follow the shuffling cups to find gem', category: 'specialty', bgColor: 'from-amber-600/20 to-yellow-800/20 border-amber-500/30', payout: '3x Payout' },
+  { id: 'DERBY', title: 'Cyber Derby', emoji: '🐎', desc: 'Bets on neon cybernetic horse race', category: 'specialty', bgColor: 'from-blue-600/20 to-cyan-800/20 border-blue-500/30', payout: 'Up to 12x' },
+  { id: 'DRAGON_TIGER', title: 'Dragon Tiger', emoji: '🐉', desc: 'High-speed classic two-card baccarat style', category: 'tables', bgColor: 'from-red-600/20 to-yellow-800/20 border-red-500/30', payout: 'Double/Tie' },
+  { id: 'PUSHER', title: 'Coin Pusher', emoji: '🪙', desc: 'Push gold coins off high-payout shelves', category: 'slots', bgColor: 'from-yellow-500/20 to-amber-700/20 border-yellow-400/30', payout: 'Cascades' },
+  { id: 'LIMBO', title: 'Limbo Roll', emoji: '🚀', desc: 'Aim high multipliers before rocket drops', category: 'multipliers', bgColor: 'from-pink-600/20 to-rose-800/20 border-pink-500/30', payout: 'Up to 1000x' },
+  { id: 'SHOOTER', title: 'Space Shooter', emoji: '☄️', desc: 'Arcade shoot enemies and dodge asteroids', category: 'specialty', bgColor: 'from-indigo-600/20 to-sky-800/20 border-indigo-500/30', payout: 'Multiplier' },
+];
+
 export default function App() {
   // --- Profile State & Persistence ---
   const [profile, setProfile] = useState<PlayerProfile>(() => {
@@ -338,6 +376,9 @@ export default function App() {
   // --- Game Settings ---
   const [gameState, setGameState] = useState<GameState>(GameState.LOBBY);
   const [activeLobbyTab, setActiveLobbyTab] = useState<'BINGO' | 'SLOTS' | 'DICE' | 'CRASH' | 'MINES' | 'PLINKO' | 'HILO' | 'ROULETTE' | 'BLACKJACK' | 'POKER' | 'KENO' | 'SNAKE' | 'COINFLIP' | 'WHEEL' | 'TOWER' | 'SCRATCH' | 'RPS' | 'SHELL' | 'DERBY' | 'DRAGON_TIGER' | 'PUSHER' | 'LIMBO' | 'SHOOTER' | 'BACCARAT'>('BINGO');
+  const [activeGame, setActiveGame] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'slots' | 'tables' | 'multipliers' | 'specialty'>('all');
   const [ticketCount, setTicketCount] = useState<number>(2); // Default 2 tickets
   const [targetPattern, setTargetPattern] = useState<PatternType>(PatternType.LINE);
   const [callerSpeed, setCallerSpeed] = useState<number>(3000); // ms (Default Normal 3s)
@@ -964,6 +1005,7 @@ export default function App() {
     setTickets([]);
     setCalledNumbers(new Set());
     setLastCalledBall(null);
+    setActiveGame(null);
   };
 
   // Pattern Highlight demonstration indices helper for active card render during gaming
@@ -999,7 +1041,8 @@ export default function App() {
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Main Bar / Header Navigation */}
-      <header className="sticky top-0 z-30 bg-[#0a0a1f]/90 backdrop-blur-md border-b border-white/10 px-6 py-4">
+      {activeGame === null && (
+        <header className="sticky top-0 z-30 bg-[#0a0a1f]/90 backdrop-blur-md border-b border-white/10 px-6 py-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
           
           {/* Logo */}
@@ -1089,6 +1132,7 @@ export default function App() {
           </div>
         </div>
       </header>
+      )}
 
       {/* Floating Alert Messages */}
       <AnimatePresence>
