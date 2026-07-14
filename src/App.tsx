@@ -53,6 +53,7 @@ import { BowlingGame } from './components/BowlingGame';
 import { DragRaceGame } from './components/DragRaceGame';
 import { SolitaireGame } from './components/SolitaireGame';
 import { PolicyDocuments } from './components/PolicyDocuments';
+import { EarnChips } from './components/EarnChips';
 import { 
   Coins, 
   Volume2, 
@@ -1108,14 +1109,29 @@ export default function App() {
           {/* Profile Bar */}
           <div className="flex items-center gap-3">
             {/* Interactive Faucet indicator */}
-            <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 shadow-inner">
-              <Coins className="w-4 h-4 text-amber-400" />
+            <button
+              type="button"
+              onClick={() => {
+                setGameState(GameState.LOBBY);
+                setActiveGame(null);
+                setSelectedCategory('earn_chips');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const mainEl = document.querySelector('main');
+                if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2 bg-amber-400/10 hover:bg-amber-400/20 px-3 py-1.5 rounded-xl border border-amber-400/20 shadow-inner cursor-pointer transition-all hover:scale-105 active:scale-95 group text-left"
+              title="Click to Earn Free Chips!"
+            >
+              <Coins className="w-4 h-4 text-amber-400 group-hover:animate-bounce" />
               <div className="flex flex-col">
-                <span className="text-xs font-mono font-bold text-amber-400 flex items-center gap-0.5">
+                <span className="text-xs font-mono font-bold text-amber-400 flex items-center gap-1">
                   {profile.chips} <span className="text-[9px] text-white/40 font-normal">Chips</span>
+                  <span className="text-[8px] bg-amber-400 text-black px-1 py-0.2 rounded font-black font-sans uppercase tracking-tighter">
+                    + GET
+                  </span>
                 </span>
               </div>
-            </div>
+            </button>
 
             {/* Level / User Card */}
             <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10">
@@ -1206,13 +1222,21 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <main className={`mx-auto transition-all duration-300 ${activeGame !== null ? 'w-full max-w-none p-0 sm:p-4' : 'max-w-7xl px-4 sm:px-6 py-8 animate-fade-in'}`}>
+      <main className={`mx-auto transition-all duration-300 ${
+        activeGame !== null 
+          ? `w-full max-w-none p-0 sm:p-4 max-sm:fixed max-sm:inset-x-0 max-sm:z-40 max-sm:bg-[#05050a] max-sm:overflow-y-auto ${
+              gameState === GameState.PLAYING 
+                ? 'max-sm:top-0 max-sm:h-screen' 
+                : 'max-sm:top-[60px] max-sm:h-[calc(100vh-60px)]'
+            }` 
+          : 'max-w-7xl px-4 sm:px-6 py-8 animate-fade-in'
+      }`}>
         
         {/* LOBBY GAME SCREEN */}
         {gameState === GameState.LOBBY && (
           <div className="space-y-8">
             {/* Promo Header banner */}
-            {activeGame === null && (
+            {activeGame === null && selectedCategory !== 'earn_chips' && (
               <div className="bg-gradient-to-r from-amber-500/10 via-[#0a0a1f]/80 to-blue-500/5 border border-white/10 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-6 shadow-2xl">
                 <div className="space-y-1 text-center md:text-left">
                   <span className="text-[10px] bg-amber-400 text-black font-black uppercase font-mono tracking-widest px-2.5 py-0.5 rounded-full">Learn & Play 101</span>
@@ -1233,7 +1257,7 @@ export default function App() {
             {/* Active Game Top Bar OR Lobby Selection Cards Grid */}
             {activeGame !== null ? (
               /* FLOATING/STICKY DEDICATED TOP BAR FOR ACTIVE GAME */
-              <div className="sticky top-0 z-40 bg-[#0a0a1f]/95 backdrop-blur-md border border-white/10 p-3 sm:p-4 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-row justify-between items-center gap-3">
+              <div className="fixed inset-x-0 top-0 z-50 sm:sticky sm:top-0 sm:z-40 bg-[#0a0a1f]/95 backdrop-blur-md border-b sm:border border-white/10 p-3 sm:p-4 rounded-none sm:rounded-3xl shadow-2xl flex flex-row justify-between items-center gap-3 h-[60px] sm:h-auto">
                 <div className="flex items-center gap-2 sm:gap-4 text-left">
                   <button
                     onClick={() => {
@@ -1291,7 +1315,8 @@ export default function App() {
                       { id: 'slots', label: '🎰 Slots' },
                       { id: 'tables', label: '🃏 Table Games' },
                       { id: 'multipliers', label: '📈 Multipliers' },
-                      { id: 'specialty', label: '🔮 Specialty' }
+                      { id: 'specialty', label: '🔮 Specialty' },
+                      { id: 'earn_chips', label: '🎁 Earn Chips' }
                     ].map(cat => (
                       <button
                         key={cat.id}
@@ -1309,20 +1334,33 @@ export default function App() {
                   </div>
 
                   {/* Search input */}
-                  <div className="relative w-full md:w-80">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                    <input
-                      type="text"
-                      placeholder="Search 24+ Vegas games..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl pl-11 pr-4 py-2.5 text-xs font-semibold text-white placeholder-white/35 focus:outline-none focus:border-amber-400 transition-all"
-                    />
-                  </div>
+                  {selectedCategory !== 'earn_chips' && (
+                    <div className="relative w-full md:w-80">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                      <input
+                        type="text"
+                        placeholder="Search 24+ Vegas games..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl pl-11 pr-4 py-2.5 text-xs font-semibold text-white placeholder-white/35 focus:outline-none focus:border-amber-400 transition-all"
+                      />
+                    </div>
+                  )}
                 </div>
 
-                {/* Grid of games cards */}
-                <div className="space-y-6">
+                {selectedCategory === 'earn_chips' ? (
+                  <EarnChips
+                    profile={profile}
+                    onAddChips={(amount, desc) => handleUpdateChipsWithLog('EARN', amount, desc)}
+                    triggerAlert={triggerAlert}
+                    tasks={profile.dailyTasks || []}
+                    onClaimTask={handleClaimDailyTask}
+                    onAddTask={handleAddCustomTask}
+                    onProgressTask={handleProgressCustomTask}
+                  />
+                ) : (
+                  /* Grid of games cards */
+                  <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <div className="text-left">
                       <h3 className="text-sm font-bold uppercase tracking-wider text-white/80 flex items-center gap-2">
@@ -1395,6 +1433,9 @@ export default function App() {
                               onClick={() => {
                                 setActiveLobbyTab(game.id as any);
                                 setActiveGame(game.id);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                const mainEl = document.querySelector('main');
+                                if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
                               }}
                               className="w-full py-2.5 rounded-xl bg-white/5 group-hover:bg-amber-400 group-hover:text-black border border-white/10 group-hover:border-amber-300 text-xs font-extrabold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5"
                             >
@@ -1406,11 +1447,12 @@ export default function App() {
                     );
                   })()}
                 </div>
+                )}
               </div>
             )}
 
             {/* Conditional Game Views wrapped inside dynamic container styling */}
-            <div className={activeGame !== null ? "w-full bg-[#050510]/50 border border-white/5 sm:border-white/10 p-2 sm:p-6 rounded-2xl sm:rounded-3xl shadow-3xl min-h-[450px] flex flex-col justify-center text-left" : "hidden"}>
+            <div className={activeGame !== null ? "w-full bg-[#050510]/50 border-0 sm:border border-white/5 sm:border-white/10 p-4 sm:p-6 rounded-none sm:rounded-3xl shadow-3xl min-h-[450px] flex flex-col justify-start sm:justify-center text-left" : "hidden"}>
 
             {/* Conditional Game Views */}
             {activeLobbyTab === 'SLOTS' && (
@@ -1979,7 +2021,7 @@ export default function App() {
 
             {/* "SHOW DOWN MORE GAME SHOW" - HORIZONTAL CAROUSEL OF OTHER CASINO GAMES */}
             {activeGame !== null && (
-              <div className="bg-[#0a0a1f]/60 border border-white/10 p-5 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
+              <div className="bg-[#0a0a1f]/60 border-t sm:border border-white/10 p-5 sm:p-6 rounded-none sm:rounded-3xl space-y-4">
                 <div className="flex justify-between items-center text-left">
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
@@ -2002,6 +2044,9 @@ export default function App() {
                         setActiveGame(g.id);
                         setActiveLobbyTab(g.id);
                         triggerAlert(`Switched to ${g.name}!`, 'info');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        const mainEl = document.querySelector('main');
+                        if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                       className="flex-shrink-0 w-44 p-3.5 bg-[#0a0a1f]/90 border border-white/5 hover:border-amber-400/30 rounded-2xl text-left transition-all hover:bg-white/5 flex flex-col justify-between h-24 cursor-pointer group"
                     >
@@ -2019,20 +2064,9 @@ export default function App() {
             )}
 
             {/* Bento Grid: Daily Quests, Analytics, Lucky Wheel & Leaderboard */}
-            {activeGame === null && (
+            {activeGame === null && selectedCategory !== 'earn_chips' && (
               <CasinoStats 
                 profile={profile} 
-                onAddChips={(amount) => {
-                  setProfile(prev => ({
-                    ...prev,
-                    chips: prev.chips + amount
-                  }));
-                  triggerAlert(`Added ${amount} chips from Lucky Wheel!`, 'success');
-                }} 
-                tasks={profile.dailyTasks || []}
-                onClaimTask={handleClaimDailyTask}
-                onAddTask={handleAddCustomTask}
-                onProgressTask={handleProgressCustomTask}
               />
             )}
           </div>
@@ -2040,16 +2074,16 @@ export default function App() {
 
         {/* ACTIVE PLAYING SCREEN */}
         {gameState === GameState.PLAYING && (
-          <div className="space-y-6">
+          <div className="space-y-6 p-4 sm:p-0">
             
             {/* HUD Status Bar */}
-            <div className="flex flex-col sm:flex-row justify-between items-center bg-[#0a0a1f]/90 border border-white/10 p-4 rounded-2xl shadow-xl gap-4">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-row justify-between items-center bg-[#0a0a1f]/95 border-b sm:border border-white/10 p-3 sm:p-4 rounded-none sm:rounded-2xl shadow-xl gap-3 max-sm:sticky max-sm:top-0 max-sm:z-50 max-sm:-mx-4 max-sm:-mt-4">
+              <div className="flex items-center gap-2 sm:gap-4">
                 <button
                   onClick={handleEndGameAndBackToLobby}
-                  className="px-3.5 py-1.5 rounded-xl border border-white/10 text-xs text-white/60 hover:text-white transition-all bg-white/5 hover:bg-white/10 font-mono"
+                  className="px-3 py-1.5 rounded-xl border border-white/10 text-[11px] sm:text-xs text-white/60 hover:text-white transition-all bg-white/5 hover:bg-white/10 font-mono font-bold"
                 >
-                  Quit to Lobby
+                  Exit
                 </button>
                 <div className="hidden sm:flex items-center gap-2 text-xs text-white/60">
                   <span className="font-mono">Target Pattern:</span>
@@ -2060,19 +2094,19 @@ export default function App() {
               </div>
 
               {/* Status indicator */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 {/* Auto Daub state pill */}
-                <span className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold border ${
+                <span className={`px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-mono uppercase font-bold border ${
                   isAutoDaub 
                     ? 'bg-teal-500/10 text-teal-400 border-teal-500/20' 
                     : 'bg-amber-400/10 text-amber-400 border-amber-400/20'
                 }`}>
-                  {isAutoDaub ? 'Auto Daub ON' : 'Manual Daub (Bonus XP!)'}
+                  {isAutoDaub ? 'Auto' : 'Manual'}
                 </span>
 
                 {/* Draw status */}
-                <div className="flex items-center gap-1.5 text-xs text-white/40 font-mono">
-                  <span>BALLS CALLED:</span>
+                <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-white/40 font-mono">
+                  <span>BALLS:</span>
                   <span className="text-white font-bold">{ballsCalledThisRound}</span>
                 </div>
               </div>
