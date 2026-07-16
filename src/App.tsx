@@ -37,6 +37,9 @@ import { ZenSakuraSlots } from './components/ZenSakuraSlots';
 import { CosmicVoidSlots } from './components/CosmicVoidSlots';
 import { PirateCoveSlots } from './components/PirateCoveSlots';
 import { PharaohGoldSlots } from './components/PharaohGoldSlots';
+import { CandyWonderlandSlots } from './components/CandyWonderlandSlots';
+import { RetroArcadeSlots } from './components/RetroArcadeSlots';
+import { LuckyLeprechaunSlots } from './components/LuckyLeprechaunSlots';
 import { GemsFortuneGame } from './components/GemsFortuneGame';
 import { DiceGame } from './components/DiceGame';
 import { CrashGame } from './components/CrashGame';
@@ -127,6 +130,9 @@ const CASINO_GAMES = [
   { id: 'COSMIC_SLOTS', name: '🪐 Cosmic Void Slots', desc: 'Align gravitational singularities for high-multiplier cosmic paylines', category: 'slots', badge: 'SCI-FI' },
   { id: 'PIRATE_SLOTS', name: '🏴‍☠️ Crimson Cove Slots', desc: 'Settle sails to plunder captain\'s bounty on the high seas', category: 'slots', badge: 'HIGH SEAS' },
   { id: 'PHARAOH_SLOTS', name: '🏺 Pharaoh\'s Gold Slots', desc: 'Excavate hidden Giza chambers to find ancient divine multipliers', category: 'slots', badge: 'MYTHICAL' },
+  { id: 'CANDY_SLOTS', name: '🍭 Candy Wonderland', desc: 'Savor sweet paylines & sugar multiplier rush cascades', category: 'slots', badge: 'SWEET' },
+  { id: 'RETRO_SLOTS', name: '👾 Retro Arcade Slots', desc: '8-bit retro scanlines with golden gamepad wild aligns', category: 'slots', badge: 'RETRO' },
+  { id: 'IRISH_SLOTS', name: '🍀 Lucky Leprechaun', desc: 'Align four-leaf clovers & find Irish pots of gold', category: 'slots', badge: 'LUCKY' },
   { id: 'GEMS', name: '💎 Gems Fortune', desc: 'Match colorful gems and discover hidden treasures', category: 'specialty', badge: 'NEW' },
   { id: 'DICE', name: '🎲 Dice Duel', desc: 'Roll the bones in an intense showdown vs House Dealer', category: 'tables', badge: 'FAVORITE' },
   { id: 'CRASH', name: '🚀 Rocket Crash', desc: 'Cash out before the rocket crashes for exponential payouts', category: 'multipliers', badge: 'TRENDING' },
@@ -270,6 +276,9 @@ const GAMES: GameCard[] = [
   { id: 'COSMIC_SLOTS', title: 'Cosmic Void Slots', emoji: '🪐', desc: 'Align gravitational singularities for high-multiplier cosmic paylines', badge: 'Sci-Fi', category: 'slots', bgColor: 'from-violet-600/20 to-indigo-900/20 border-violet-500/30', payout: 'Up to 1500x' },
   { id: 'PIRATE_SLOTS', title: 'Crimson Cove Slots', emoji: '🏴‍☠️', desc: 'Settle sails to plunder captain\'s bounty on the high seas', badge: 'Plunder', category: 'slots', bgColor: 'from-amber-600/20 to-yellow-900/20 border-amber-500/30', payout: 'Up to 1000x' },
   { id: 'PHARAOH_SLOTS', title: 'Pharaoh\'s Gold Slots', emoji: '🏺', desc: 'Excavate hidden Giza chambers to find ancient divine multipliers', badge: 'Myth', category: 'slots', bgColor: 'from-yellow-600/20 to-amber-900/20 border-yellow-500/30', payout: 'Up to 1250x' },
+  { id: 'CANDY_SLOTS', title: 'Candy Wonderland', emoji: '🍭', desc: 'Savor sweet paylines & sugar multiplier rush cascades', badge: 'Sweet', category: 'slots', bgColor: 'from-pink-600/20 to-fuchsia-800/20 border-pink-500/30', payout: 'Up to 1500x' },
+  { id: 'RETRO_SLOTS', title: 'Retro Arcade Slots', emoji: '👾', desc: '8-bit retro scanlines with golden gamepad wild aligns', badge: 'Retro', category: 'slots', bgColor: 'from-cyan-600/20 to-indigo-800/20 border-cyan-500/30', payout: 'Up to 1800x' },
+  { id: 'IRISH_SLOTS', title: 'Lucky Leprechaun', emoji: '🍀', desc: 'Align four-leaf clovers & find Irish pots of gold', badge: 'Lucky', category: 'slots', bgColor: 'from-emerald-600/20 to-yellow-800/20 border-emerald-500/30', payout: 'Up to 1500x' },
   { id: 'GEMS', title: 'Gems Fortune', emoji: '💎', desc: 'Match colorful gems and discover hidden treasures', badge: 'New', category: 'slots', bgColor: 'from-cyan-600/20 to-blue-800/20 border-cyan-500/30', payout: 'Up to 500x' },
   { id: 'CRASH', title: 'Rocket Crash', emoji: '🚀', desc: 'Exponential multipliers space flight', badge: 'Trending', category: 'multipliers', bgColor: 'from-purple-600/20 to-indigo-600/20 border-purple-500/30', payout: 'Unlimited' },
   { id: 'MINES', title: 'Mines Floor', desc: 'Dodge mines and collect multiplier tiles', emoji: '💣', category: 'multipliers', bgColor: 'from-red-600/20 to-zinc-800/20 border-red-500/30', payout: 'Up to 500x' },
@@ -1588,6 +1597,42 @@ export default function App() {
                 onUpdateChips={(delta) => {
                   const desc = delta > 0 ? `Pharaoh's Gold Slots Spin: Won +${delta} Chips! 🏺` : `Pharaoh's Gold Slots: Placed ${Math.abs(delta)} Chip spin`;
                   handleUpdateChipsWithLog('PHARAOH_SLOTS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'CANDY_SLOTS' && (
+              <CandyWonderlandSlots
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Candy Wonderland Slots Spin: Won +${delta} Chips! 🍭` : `Candy Wonderland Slots: Placed ${Math.abs(delta)} Chip spin`;
+                  handleUpdateChipsWithLog('CANDY_SLOTS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'RETRO_SLOTS' && (
+              <RetroArcadeSlots
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Retro Arcade Slots Spin: Won +${delta} Chips! 🎮` : `Retro Arcade Slots: Placed ${Math.abs(delta)} Chip spin`;
+                  handleUpdateChipsWithLog('RETRO_SLOTS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'IRISH_SLOTS' && (
+              <LuckyLeprechaunSlots
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Lucky Leprechaun Slots Spin: Won +${delta} Chips! 🍀` : `Lucky Leprechaun Slots: Placed ${Math.abs(delta)} Chip spin`;
+                  handleUpdateChipsWithLog('IRISH_SLOTS', delta, desc);
                 }}
                 onUpdateTask={updateDailyTaskProgress}
                 triggerAlert={triggerAlert}

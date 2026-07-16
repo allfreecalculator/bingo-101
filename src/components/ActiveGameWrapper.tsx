@@ -371,55 +371,55 @@ export const ActiveGameWrapper: React.FC<ActiveGameWrapperProps> = ({
   }, [activeGame]);
 
   return (
-    <div className="space-y-8 animate-fade-in pb-16">
+    <div className="space-y-4 sm:space-y-8 animate-fade-in pb-8 sm:pb-16">
       
       {/* 2. Game Banner */}
-      <div className="relative rounded-3xl p-6 sm:p-8 overflow-hidden bg-gradient-to-r from-amber-500/10 via-[#0a0a1f] to-indigo-500/10 border border-white/10 text-left shadow-2xl">
+      <div className="relative rounded-2xl sm:rounded-3xl p-4 sm:p-8 overflow-hidden bg-gradient-to-r from-amber-500/10 via-[#0a0a1f] to-indigo-500/10 border border-white/10 text-left shadow-2xl">
         <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-amber-400/5 via-transparent to-transparent pointer-events-none blur-3xl" />
         <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-gradient-to-tr from-indigo-500/5 via-transparent to-transparent pointer-events-none blur-3xl" />
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] bg-amber-400/10 border border-amber-400/20 text-amber-400 font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
+          <div className="space-y-2 sm:space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[9px] sm:text-[10px] bg-amber-400/10 border border-amber-400/20 text-amber-400 font-mono font-bold uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-md">
                 {meta.category} Game
               </span>
-              <span className="text-[10px] bg-white/5 border border-white/10 text-white/50 font-mono tracking-widest px-2.5 py-0.5 rounded-md">
+              <span className="text-[9px] sm:text-[10px] bg-white/5 border border-white/10 text-white/50 font-mono tracking-widest px-2 sm:px-2.5 py-0.5 rounded-md">
                 RNG CERTIFIED
               </span>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="text-4xl filter drop-shadow select-none">{meta.icon}</span>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="text-3xl sm:text-4xl filter drop-shadow select-none">{meta.icon}</span>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight">
                   {meta.name}
                 </h1>
-                <p className="text-xs text-white/50">{meta.tagline}</p>
+                <p className="text-[11px] sm:text-xs text-white/50">{meta.tagline}</p>
               </div>
             </div>
           </div>
 
           {/* Quick Metrics Tag */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-white/5 border border-white/5 p-4 rounded-2xl min-w-[200px] sm:min-w-[320px]">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 bg-white/5 border border-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl min-w-[200px] sm:min-w-[320px]">
             <div>
               <span className="block text-[8px] font-mono text-white/40 uppercase">RTP RATIO</span>
-              <span className="text-xs font-mono font-bold text-emerald-400">{meta.rtp}</span>
+              <span className="text-[11px] sm:text-xs font-mono font-bold text-emerald-400">{meta.rtp}</span>
             </div>
             <div>
               <span className="block text-[8px] font-mono text-white/40 uppercase">VOLATILITY</span>
-              <span className="text-xs font-mono font-bold text-amber-400">{meta.volatility}</span>
+              <span className="text-[11px] sm:text-xs font-mono font-bold text-amber-400">{meta.volatility}</span>
             </div>
             <div className="hidden sm:block">
               <span className="block text-[8px] font-mono text-white/40 uppercase">MAX PAYOUT</span>
-              <span className="text-xs font-mono font-bold text-yellow-500">{meta.payout}</span>
+              <span className="text-[11px] sm:text-xs font-mono font-bold text-yellow-500">{meta.payout}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-white/10 gap-1.5 pb-0">
+      <div className="flex overflow-x-auto scrollbar-none border-b border-white/10 gap-1 pb-0 whitespace-nowrap">
         {[
           { id: 'play', label: '🎮 PLAY GAME', icon: <Monitor className="w-3.5 h-3.5" /> },
           { id: 'about', label: '📖 ABOUT & INFO', icon: <Info className="w-3.5 h-3.5" /> },
@@ -429,7 +429,7 @@ export const ActiveGameWrapper: React.FC<ActiveGameWrapperProps> = ({
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-4 py-3 text-xs font-extrabold tracking-wider transition-all border-b-2 cursor-pointer flex items-center gap-1.5 ${
+            className={`px-2.5 py-2.5 sm:px-4 sm:py-3 text-[10px] sm:text-xs font-extrabold tracking-wider transition-all border-b-2 cursor-pointer flex items-center gap-1 sm:gap-1.5 flex-shrink-0 ${
               activeTab === tab.id
                 ? 'border-amber-400 text-amber-400 bg-white/5 rounded-t-xl'
                 : 'border-transparent text-white/40 hover:text-white/80'
@@ -442,14 +442,14 @@ export const ActiveGameWrapper: React.FC<ActiveGameWrapperProps> = ({
 
       {/* 3. Game Window (Main Focus) & Active Game Interface */}
       {activeTab === 'play' && (
-        <div className="space-y-8 animate-fade-in">
+        <div className="space-y-4 sm:space-y-8 animate-fade-in">
           {/* Main active game container */}
-          <div className="bg-[#050510]/80 border border-white/10 rounded-3xl p-3 sm:p-6 shadow-3xl overflow-hidden relative min-h-[400px]">
+          <div className="bg-[#050510]/80 border border-white/10 rounded-xl sm:rounded-3xl p-1.5 sm:p-6 shadow-3xl overflow-hidden relative min-h-[350px] sm:min-h-[400px]">
             {children}
           </div>
 
           {/* 4. Game Controls Card */}
-          <div className="bg-[#0a0a1f]/90 border border-white/10 rounded-3xl p-5 sm:p-6 text-left shadow-2xl space-y-4">
+          <div className="bg-[#0a0a1f]/90 border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-left shadow-2xl space-y-3 sm:space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-widest text-white/80 flex items-center gap-2 pb-2 border-b border-white/5">
               <Settings className="w-4 h-4 text-amber-400" /> Game Console Controls Schematic
             </h3>

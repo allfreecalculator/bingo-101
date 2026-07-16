@@ -47,3 +47,78 @@ body {
   will-change: transform;
 }
 
+/* Optimize all casino games on mobile to utilize extra space and fit pixel-perfect */
+@media (max-width: 640px) {
+  /* Reduce excessive padding inside game layouts on mobile */
+  .animate-fade-in .p-6,
+  .animate-fade-in .sm\:p-6 {
+    padding: 0.75rem !important; /* 12px instead of 24px */
+  }
+  .animate-fade-in .p-5 {
+    padding: 0.625rem !important; /* 10px instead of 20px */
+  }
+  .animate-fade-in .p-4 {
+    padding: 0.5rem !important; /* 8px instead of 16px */
+  }
+  .animate-fade-in .rounded-3xl {
+    border-radius: 1rem !important; /* 16px instead of 24px */
+  }
+  .animate-fade-in .gap-6 {
+    gap: 0.75rem !important;
+  }
+  .animate-fade-in .gap-4 {
+    gap: 0.5rem !important;
+  }
+
+  /* Specific styling override for slot physical cabinet frames & reels container */
+  .animate-fade-in .border-2.p-5 {
+    padding: 0.5rem !important;
+  }
+  .animate-fade-in .grid-cols-3.gap-3 {
+    gap: 0.375rem !important;
+    padding: 0.375rem !important;
+  }
+  .animate-fade-in .grid-cols-3.gap-4 {
+    gap: 0.375rem !important;
+  }
+
+  /* Ensure the slot symbol elements scale beautifully on small screens */
+  .animate-fade-in .w-14.h-14 {
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+  }
+  .animate-fade-in .w-11.h-11 {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+  }
+  .animate-fade-in .w-10.h-10 {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  
+  /* Make slot columns height scale proportionally to prevent screen-overflow */
+  .animate-fade-in .h-\[260px\] {
+    height: 200px !important;
+  }
+  .animate-fade-in .h-\[170px\] {
+    height: 130px !important;
+  }
+  .animate-fade-in .h-\[340px\] {
+    height: 260px !important;
+  }
+  
+  /* Fix spacing in game buttons and footer sections */
+  .animate-fade-in button.px-5.py-2\.5 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    font-size: 10px !important;
+  }
+
+  /* Compact the bottom console control panels to utilize space */
+  .animate-fade-in .grid-cols-1.md\:grid-cols-2.gap-4 {
+    gap: 0.375rem !important;
+  }
+}
+
