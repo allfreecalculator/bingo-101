@@ -10,16 +10,90 @@ interface SlotGameProps {
 }
 
 const REEL_SYMBOLS = [
-  { char: '🍒', weight: 15, name: 'Cherry', mult: 3, color: 'text-rose-400' },
-  { char: '🍋', weight: 15, name: 'Lemon', mult: 4, color: 'text-amber-300' },
-  { char: '🍊', weight: 12, name: 'Orange', mult: 5, color: 'text-orange-400' },
-  { char: '🍇', weight: 10, name: 'Grape', mult: 8, color: 'text-purple-400' },
-  { char: '🔔', weight: 8, name: 'Bell', mult: 12, color: 'text-yellow-400' },
-  { char: '💎', weight: 5, name: 'Diamond', mult: 25, color: 'text-cyan-400' },
-  { char: '7️⃣', weight: 3, name: 'Seven', mult: 50, color: 'text-red-500' }
+  { char: 'CHERRY', weight: 15, name: 'Cherry', mult: 3, color: 'text-rose-400', emoji: '🍒' },
+  { char: 'LEMON', weight: 15, name: 'Lemon', mult: 4, color: 'text-amber-300', emoji: '🍋' },
+  { char: 'PLUM', weight: 12, name: 'Plum/Grape', mult: 5, color: 'text-purple-400', emoji: '🍇' },
+  { char: 'BAR', weight: 10, name: 'BAR', mult: 8, color: 'text-cyan-400', emoji: '➖' },
+  { char: 'BELL', weight: 8, name: 'Bell', mult: 12, color: 'text-yellow-400', emoji: '🔔' },
+  { char: 'DIAMOND', weight: 5, name: 'Diamond', mult: 25, color: 'text-cyan-400', emoji: '💎' },
+  { char: '7', weight: 3, name: 'Lucky 7', mult: 50, color: 'text-red-500', emoji: '7️⃣' },
+  { char: 'DOLLAR', weight: 2, name: 'Golden Dollar', mult: 100, color: 'text-yellow-500', emoji: '💲' }
 ];
 
-const SPINNING_SYMBOLS = ['🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣', '🍒', '🍋', '🍊', '🍇', '🔔', '💎', '7️⃣'];
+const SPINNING_SYMBOLS = ['CHERRY', 'LEMON', 'PLUM', 'BAR', 'BELL', 'DIAMOND', '7', 'DOLLAR', 'CHERRY', 'LEMON', 'PLUM', 'BAR', 'BELL', 'DIAMOND', '7', 'DOLLAR'];
+
+const renderSlotSymbol = (symbol: string, isMiddle: boolean = false) => {
+  switch (symbol) {
+    case '7':
+      return (
+        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+          <div className="absolute inset-0 bg-red-600/35 rounded-full blur-md animate-pulse" />
+          <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-red-400 via-red-500 to-red-600 filter drop-shadow-[0_0_10px_#ef4444] select-none font-sans italic tracking-tighter">
+            7
+          </span>
+        </div>
+      );
+    case 'BAR':
+      return (
+        <div className={`bg-[#030310] border-2 border-cyan-400 rounded-lg px-2.5 py-1 shadow-[0_0_10px_rgba(34,211,238,0.7)] flex flex-col justify-center items-center scale-90 ${isMiddle ? 'scale-100' : 'scale-80 opacity-30'}`}>
+          <span className="text-[9px] font-black tracking-widest text-cyan-400 font-mono leading-none">BAR</span>
+          <div className="w-7 h-[1.5px] bg-cyan-400/85 my-0.5" />
+          <span className="text-[9px] font-black tracking-widest text-cyan-400 font-mono leading-none">BAR</span>
+        </div>
+      );
+    case 'BELL':
+      return (
+        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+          <div className="absolute inset-0 bg-amber-500/25 rounded-full blur-md" />
+          <span className="text-4xl filter drop-shadow-[0_0_8px_#f59e0b] select-none">🔔</span>
+        </div>
+      );
+    case 'CHERRY':
+      return (
+        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+          <div className="absolute inset-0 bg-rose-500/25 rounded-full blur-md" />
+          <span className="text-4xl filter drop-shadow-[0_0_8px_#f43f5e] select-none">🍒</span>
+        </div>
+      );
+    case 'DIAMOND':
+      return (
+        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+          <div className="absolute inset-0 bg-cyan-500/25 rounded-full blur-md" />
+          <span className="text-4xl filter drop-shadow-[0_0_8px_#06b6d4] select-none">💎</span>
+        </div>
+      );
+    case 'LEMON':
+      return (
+        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+          <div className="absolute inset-0 bg-yellow-400/20 rounded-full blur-md" />
+          <span className="text-4xl filter drop-shadow-[0_0_8px_#eab308] select-none">🍋</span>
+        </div>
+      );
+    case 'PLUM':
+      return (
+        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+          <div className="absolute inset-0 bg-purple-500/25 rounded-full blur-md" />
+          <span className="text-4xl filter drop-shadow-[0_0_8px_#a855f7] select-none">🍇</span>
+        </div>
+      );
+    case 'DOLLAR':
+      return (
+        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+          <div className="absolute inset-0 bg-yellow-500/35 rounded-full blur-md" />
+          <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 via-amber-400 to-yellow-500 filter drop-shadow-[0_0_10px_#f59e0b] select-none font-sans">
+            $
+          </span>
+        </div>
+      );
+    default:
+      return <span className="text-4xl select-none">{symbol}</span>;
+  }
+};
+
+const getSymbolEmoji = (symbol: string): string => {
+  const sym = REEL_SYMBOLS.find(s => s.char === symbol);
+  return sym ? sym.emoji : symbol;
+};
 
 export const SlotGame: React.FC<SlotGameProps> = ({
   chips,
@@ -38,9 +112,9 @@ export const SlotGame: React.FC<SlotGameProps> = ({
 
   // Cylindrical reels: each reel displays 3 items vertically (top, middle/payline, bottom)
   const [reels, setReels] = useState<string[][]>([
-    ['🍋', '🍒', '🍊'],
-    ['🍒', '💎', '🍇'],
-    ['🍊', '7️⃣', '🍋']
+    ['LEMON', 'CHERRY', 'PLUM'],
+    ['CHERRY', 'DIAMOND', 'PLUM'],
+    ['PLUM', '7', 'LEMON']
   ]);
   const [lastWin, setLastWin] = useState<number | null>(null);
   const [showPaytable, setShowPaytable] = useState<boolean>(false);
@@ -49,7 +123,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
   const [spinHistory, setSpinHistory] = useState<string[]>([]);
 
   // Safety tracking for staggered / manual stops
-  const targetsRef = useRef<string[]>(['🍋', '🍒', '🍊']);
+  const targetsRef = useRef<string[]>(['LEMON', 'CHERRY', 'PLUM']);
   const stoppedRef = useRef<boolean[]>([true, true, true]);
   const stopTimersRef = useRef<any[]>([]);
   const tickIntervalRef = useRef<any>(null);
@@ -293,7 +367,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
       }
 
       setSpinHistory(prev => [
-        `🏆 Won +${payout} Chips (${r1}${r2}${r3})`,
+        `🏆 Won +${payout} Chips (${getSymbolEmoji(r1)}${getSymbolEmoji(r2)}${getSymbolEmoji(r3)})`,
         ...prev
       ].slice(0, 5));
 
@@ -311,7 +385,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
       playSound('lose');
       triggerAlert('Reels settled. Better luck on the next pull!', 'info');
       setSpinHistory(prev => [
-        `❌ Lost (${r1}${r2}${r3})`,
+        `❌ Lost (${getSymbolEmoji(r1)}${getSymbolEmoji(r2)}${getSymbolEmoji(r3)})`,
         ...prev
       ].slice(0, 5));
     }
@@ -410,7 +484,9 @@ export const SlotGame: React.FC<SlotGameProps> = ({
                 {REEL_SYMBOLS.map(sym => (
                   <React.Fragment key={sym.char}>
                     <div className="flex items-center gap-2">
-                      <span className="text-xl filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">{sym.char}</span>
+                      <div className="scale-75 flex items-center justify-center -ml-2 w-10 h-10">
+                        {renderSlotSymbol(sym.char, true)}
+                      </div>
                       <span className="font-bold text-white/80">{sym.name}</span>
                     </div>
                     <div className="text-right text-emerald-400 font-extrabold">{sym.mult}x Wager</div>
@@ -463,8 +539,8 @@ export const SlotGame: React.FC<SlotGameProps> = ({
                 <>
                   <div className="flex flex-col items-center animate-reel-scroll filter blur-[2px] h-[340px] w-full justify-around select-none">
                     {SPINNING_SYMBOLS.map((sym, idx) => (
-                      <div key={idx} className="flex items-center justify-center h-12 text-4xl">
-                        {sym}
+                      <div key={idx} className="flex items-center justify-center h-12">
+                        {renderSlotSymbol(sym, true)}
                       </div>
                     ))}
                   </div>
@@ -489,7 +565,7 @@ export const SlotGame: React.FC<SlotGameProps> = ({
                           : 'blur-[0.5px] scale-90'
                       }`}
                     >
-                      <span className="text-4xl">{symbol}</span>
+                      {renderSlotSymbol(symbol, isMiddle)}
                     </motion.div>
                   );
                 })

@@ -21,7 +21,19 @@ import { BingoBoard } from './components/BingoBoard';
 import { BingoAcademy } from './components/BingoAcademy';
 import { CasinoStats } from './components/CasinoStats';
 import { DailyTasks } from './components/DailyTasks';
+import { FeaturedGames } from './components/FeaturedGames';
+import { LobbyStatistics } from './components/LobbyStatistics';
+import { LobbyLeaderboard } from './components/LobbyLeaderboard';
+import { LobbyPlayerProgress } from './components/LobbyPlayerProgress';
+import { LobbyAchievements } from './components/LobbyAchievements';
+import { LobbyDailyRewards } from './components/LobbyDailyRewards';
+import { FAQSection } from './components/FAQSection';
+import { TestimonialsSection } from './components/TestimonialsSection';
+import { LobbyFooter } from './components/LobbyFooter';
+import { ActiveGameWrapper } from './components/ActiveGameWrapper';
 import { SlotGame } from './components/SlotGame';
+import { CyberWildsSlots } from './components/CyberWildsSlots';
+import { GemsFortuneGame } from './components/GemsFortuneGame';
 import { DiceGame } from './components/DiceGame';
 import { CrashGame } from './components/CrashGame';
 import { MinesGame } from './components/MinesGame';
@@ -106,6 +118,8 @@ const AVATARS = ['💎', '🃏', '🎲', '👑', '🍀', '💰', '🍒', '🎩',
 const CASINO_GAMES = [
   { id: 'BINGO', name: '🎟️ Classic Bingo', desc: '75-Ball classic bingo floor with custom speed & voice calling', category: 'specialty', badge: 'POPULAR' },
   { id: 'SLOTS', name: '🎰 Vegas Slots', desc: 'Spin golden reels & win massive chip jackpots', category: 'slots', badge: 'HOT' },
+  { id: 'CYBER_SLOTS', name: '🔥 Cyber Wilds Slots', desc: 'Sizzle with expanding multi-line cyber wild spins', category: 'slots', badge: 'NEW' },
+  { id: 'GEMS', name: '💎 Gems Fortune', desc: 'Match colorful gems and discover hidden treasures', category: 'specialty', badge: 'NEW' },
   { id: 'DICE', name: '🎲 Dice Duel', desc: 'Roll the bones in an intense showdown vs House Dealer', category: 'tables', badge: 'FAVORITE' },
   { id: 'CRASH', name: '🚀 Rocket Crash', desc: 'Cash out before the rocket crashes for exponential payouts', category: 'multipliers', badge: 'TRENDING' },
   { id: 'MINES', name: '💣 Mines Floor', desc: 'Dodge active mines for consecutive cash out multipliers', category: 'multipliers', badge: 'NEW' },
@@ -243,6 +257,8 @@ interface GameCard {
 const GAMES: GameCard[] = [
   { id: 'BINGO', title: 'Bingo Floor', emoji: '🎟️', desc: '75-Ball classical Bingo games', badge: 'Popular', category: 'specialty', bgColor: 'from-blue-600/20 to-indigo-600/20 border-blue-500/30', payout: 'Up to 15x' },
   { id: 'SLOTS', title: 'Vegas Slots', emoji: '🎰', desc: 'Spin & Win the Golden Reels', badge: 'Hot', category: 'slots', bgColor: 'from-amber-600/20 to-red-600/20 border-amber-500/30', payout: 'Up to 1000x' },
+  { id: 'CYBER_SLOTS', title: 'Cyber Wilds Slots', emoji: '🔥', desc: 'Sizzle with expanding multi-line cyber wild spins', badge: 'New', category: 'slots', bgColor: 'from-orange-600/20 to-red-600/20 border-orange-500/30', payout: 'Up to 500x' },
+  { id: 'GEMS', title: 'Gems Fortune', emoji: '💎', desc: 'Match colorful gems and discover hidden treasures', badge: 'New', category: 'slots', bgColor: 'from-cyan-600/20 to-blue-800/20 border-cyan-500/30', payout: 'Up to 500x' },
   { id: 'CRASH', title: 'Rocket Crash', emoji: '🚀', desc: 'Exponential multipliers space flight', badge: 'Trending', category: 'multipliers', bgColor: 'from-purple-600/20 to-indigo-600/20 border-purple-500/30', payout: 'Unlimited' },
   { id: 'MINES', title: 'Mines Floor', desc: 'Dodge mines and collect multiplier tiles', emoji: '💣', category: 'multipliers', bgColor: 'from-red-600/20 to-zinc-800/20 border-red-500/30', payout: 'Up to 500x' },
   { id: 'BLACKJACK', title: 'Vegas 21', emoji: '🃏', desc: 'Classic Vegas Blackjack vs Dealer', badge: 'VIP Floor', category: 'tables', bgColor: 'from-emerald-600/20 to-teal-800/20 border-emerald-500/30', payout: '3:2 Payout' },
@@ -1235,23 +1251,43 @@ export default function App() {
         {/* LOBBY GAME SCREEN */}
         {gameState === GameState.LOBBY && (
           <div className="space-y-8">
-            {/* Promo Header banner */}
+            {/* 2. Hero Banner, 3. Statistics, 4. Featured Games */}
             {activeGame === null && selectedCategory !== 'earn_chips' && (
-              <div className="bg-gradient-to-r from-amber-500/10 via-[#0a0a1f]/80 to-blue-500/5 border border-white/10 p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-6 shadow-2xl">
-                <div className="space-y-1 text-center md:text-left">
-                  <span className="text-[10px] bg-amber-400 text-black font-black uppercase font-mono tracking-widest px-2.5 py-0.5 rounded-full">Learn & Play 101</span>
-                  <h2 className="text-2xl font-bold tracking-tight text-white mt-1">Get Started at the Casino Floor</h2>
-                  <p className="text-xs text-white/50 max-w-lg leading-relaxed">
-                    Try your luck across the casino floor! Play standard classical 75-Ball Bingo, roll the bones in Dice Duel, or spin the reels in the Golden Vegas Slots!
-                  </p>
+              <>
+                {/* 2. Hero Banner */}
+                <div className="bg-gradient-to-r from-amber-500/15 via-[#0a0a1f]/90 to-blue-500/10 border border-white/10 p-8 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-6 shadow-2xl relative overflow-hidden group text-left">
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-400/5 via-transparent to-transparent pointer-events-none" />
+                  <div className="space-y-2 text-center md:text-left relative z-10">
+                    <span className="text-[9px] bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-black uppercase font-mono tracking-widest px-3 py-1 rounded-full shadow-md shadow-amber-400/10 inline-block">
+                      Learn & Play 101
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1">
+                      Welcome to the <strong className="text-amber-400">Bingo 101 Casino</strong>
+                    </h2>
+                    <p className="text-xs text-white/60 max-w-xl leading-relaxed">
+                      Try your luck across our simulated gaming floors! Master classical 75-Ball Bingo patterns, explore Vegas slots, and scale multipliers in high-speed arcade action.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsAcademyOpen(true)}
+                    className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-extrabold text-xs transition-all tracking-wider shadow-lg hover:shadow-amber-400/15 active:scale-95 cursor-pointer relative z-10"
+                  >
+                    <BookOpen className="w-4 h-4" /> LEARN BINGO 101
+                  </button>
                 </div>
-                <button
-                  onClick={() => setIsAcademyOpen(true)}
-                  className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs transition-all tracking-wider shadow-lg active:scale-95 cursor-pointer"
-                >
-                  <BookOpen className="w-4 h-4" /> LEARN BINGO 101
-                </button>
-              </div>
+
+                {/* 3. Statistics */}
+                <LobbyStatistics profile={profile} />
+
+                {/* 4. Featured Games */}
+                <FeaturedGames 
+                  onPlayGame={(gameId) => {
+                    setActiveGame(gameId);
+                    setActiveLobbyTab(gameId);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }} 
+                />
+              </>
             )}
 
             {/* Active Game Top Bar OR Lobby Selection Cards Grid */}
@@ -1451,8 +1487,27 @@ export default function App() {
               </div>
             )}
 
-            {/* Conditional Game Views wrapped inside dynamic container styling */}
-            <div className={activeGame !== null ? "w-full bg-[#050510]/50 border-0 sm:border border-white/5 sm:border-white/10 p-4 sm:p-6 rounded-none sm:rounded-3xl shadow-3xl min-h-[450px] flex flex-col justify-start sm:justify-center text-left" : "hidden"}>
+            {/* Conditional Game Views wrapped inside dynamic ActiveGameWrapper */}
+            {activeGame !== null && (
+              <ActiveGameWrapper
+                activeGame={activeGame}
+                profile={profile}
+                onPlayGame={(gameId) => {
+                  if (activeGame === 'BINGO') {
+                    handleEndGameAndBackToLobby();
+                  }
+                  setActiveGame(gameId);
+                  setActiveLobbyTab(gameId as any);
+                  triggerAlert(`Switched to ${CASINO_GAMES.find(g => g.id === gameId)?.name}!`, 'info');
+                }}
+                onBackToLobby={() => {
+                  if (activeGame === 'BINGO') {
+                    handleEndGameAndBackToLobby();
+                  } else {
+                    setActiveGame(null);
+                  }
+                }}
+              >
 
             {/* Conditional Game Views */}
             {activeLobbyTab === 'SLOTS' && (
@@ -1461,6 +1516,30 @@ export default function App() {
                 onUpdateChips={(delta) => {
                   const desc = delta > 0 ? `Vegas Slots Spin: Won +${delta} Chips! 🎉` : `Vegas Slots: Placed ${Math.abs(delta)} Chip spin`;
                   handleUpdateChipsWithLog('SLOTS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'CYBER_SLOTS' && (
+              <CyberWildsSlots
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Cyber Wilds Slots Spin: Won +${delta} Chips! 🔥` : `Cyber Wilds Slots: Placed ${Math.abs(delta)} Chip spin`;
+                  handleUpdateChipsWithLog('CYBER_SLOTS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'GEMS' && (
+              <GemsFortuneGame
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Gems Fortune Match: Won +${delta} Chips! 💎` : `Gems Fortune Match: Placed ${Math.abs(delta)} Chip wager`;
+                  handleUpdateChipsWithLog('GEMS', delta, desc);
                 }}
                 onUpdateTask={updateDailyTaskProgress}
                 triggerAlert={triggerAlert}
@@ -2017,57 +2096,46 @@ export default function App() {
               </div>
             )}
 
-            </div>
-
-            {/* "SHOW DOWN MORE GAME SHOW" - HORIZONTAL CAROUSEL OF OTHER CASINO GAMES */}
-            {activeGame !== null && (
-              <div className="bg-[#0a0a1f]/60 border-t sm:border border-white/10 p-5 sm:p-6 rounded-none sm:rounded-3xl space-y-4">
-                <div className="flex justify-between items-center text-left">
-                  <div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 fill-current text-amber-400 animate-pulse" /> Play Other Casino Games
-                    </h3>
-                    <p className="text-[10px] text-white/40 font-mono uppercase">Single tap to jump directly into full-screen action</p>
-                  </div>
-                </div>
-                
-                {/* Horizontal scroll list */}
-                <div className="flex gap-4 overflow-x-auto pb-3 pt-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                  {CASINO_GAMES.filter(g => g.id !== activeGame).map((g) => (
-                    <button
-                      key={g.id}
-                      type="button"
-                      onClick={() => {
-                        if (activeGame === 'BINGO') {
-                          handleEndGameAndBackToLobby();
-                        }
-                        setActiveGame(g.id);
-                        setActiveLobbyTab(g.id);
-                        triggerAlert(`Switched to ${g.name}!`, 'info');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        const mainEl = document.querySelector('main');
-                        if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className="flex-shrink-0 w-44 p-3.5 bg-[#0a0a1f]/90 border border-white/5 hover:border-amber-400/30 rounded-2xl text-left transition-all hover:bg-white/5 flex flex-col justify-between h-24 cursor-pointer group"
-                    >
-                      <div>
-                        <span className="text-xs font-black text-white block truncate group-hover:text-amber-400 transition-colors">{g.name}</span>
-                        <span className="text-[8px] font-mono text-white/40 block mt-0.5 uppercase tracking-wider">{g.category}</span>
-                      </div>
-                      <span className="text-[9px] text-amber-400 font-bold self-end font-mono">
-                        PLAY NOW →
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              </ActiveGameWrapper>
             )}
 
-            {/* Bento Grid: Daily Quests, Analytics, Lucky Wheel & Leaderboard */}
+            {/* 7. Daily Rewards, 8. Leaderboard, 9. Player Progress, 10. Achievements, 11. FAQ, 12. Testimonials, 13. Footer */}
             {activeGame === null && selectedCategory !== 'earn_chips' && (
-              <CasinoStats 
-                profile={profile} 
-              />
+              <>
+                {/* 7. Daily Rewards */}
+                <LobbyDailyRewards 
+                  profile={profile} 
+                  onAddChips={(amount, desc) => handleUpdateChipsWithLog('EARN', amount, desc)}
+                  triggerAlert={triggerAlert}
+                />
+
+                {/* 8. Leaderboard */}
+                <LobbyLeaderboard profile={profile} />
+
+                {/* 9. Player Progress */}
+                <LobbyPlayerProgress profile={profile} />
+
+                {/* 10. Achievements */}
+                <LobbyAchievements 
+                  profile={profile} 
+                  onClaimReward={(amount, desc) => handleUpdateChipsWithLog('ACHIEVEMENT', amount, desc)}
+                />
+
+                {/* 11. FAQ */}
+                <FAQSection />
+
+                {/* 12. Testimonials */}
+                <TestimonialsSection />
+
+                {/* 13. Footer */}
+                <LobbyFooter 
+                  onOpenAcademy={() => setIsAcademyOpen(true)} 
+                  onOpenPolicies={() => {
+                    setActivePolicyTab('privacy');
+                    setIsPolicyOpen(true);
+                  }}
+                />
+              </>
             )}
           </div>
         )}
