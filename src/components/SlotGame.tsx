@@ -23,68 +23,201 @@ const REEL_SYMBOLS = [
 const SPINNING_SYMBOLS = ['CHERRY', 'LEMON', 'PLUM', 'BAR', 'BELL', 'DIAMOND', '7', 'DOLLAR', 'CHERRY', 'LEMON', 'PLUM', 'BAR', 'BELL', 'DIAMOND', '7', 'DOLLAR'];
 
 const renderSlotSymbol = (symbol: string, isMiddle: boolean = false) => {
+  const scaleClass = isMiddle ? 'scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]' : 'scale-90 opacity-40';
+  
   switch (symbol) {
     case '7':
       return (
-        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
-          <div className="absolute inset-0 bg-red-600/35 rounded-full blur-md animate-pulse" />
-          <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-red-400 via-red-500 to-red-600 filter drop-shadow-[0_0_10px_#ef4444] select-none font-sans italic tracking-tighter">
-            7
-          </span>
+        <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${scaleClass}`}>
+          <div className="absolute inset-0 bg-red-600/30 rounded-full blur-md animate-pulse" />
+          <svg className="w-11 h-11 filter drop-shadow-[0_2px_8px_rgba(239,68,68,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad7" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#fca5a5" />
+                <stop offset="35%" stopColor="#ef4444" />
+                <stop offset="100%" stopColor="#991b1b" />
+              </linearGradient>
+              <linearGradient id="stroke7" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="100%" stopColor="#f87171" />
+              </linearGradient>
+            </defs>
+            <path 
+              d="M6 4h12l-6 16H8l5-12H6V4z" 
+              fill="url(#grad7)" 
+              stroke="url(#stroke7)" 
+              strokeWidth="1.2" 
+              strokeLinejoin="round"
+            />
+          </svg>
+          <div className="absolute top-1 right-1 animate-ping">
+            <Sparkles className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300" />
+          </div>
         </div>
       );
+
     case 'BAR':
       return (
-        <div className={`bg-[#030310] border-2 border-cyan-400 rounded-lg px-2.5 py-1 shadow-[0_0_10px_rgba(34,211,238,0.7)] flex flex-col justify-center items-center scale-90 ${isMiddle ? 'scale-100' : 'scale-80 opacity-30'}`}>
-          <span className="text-[9px] font-black tracking-widest text-cyan-400 font-mono leading-none">BAR</span>
-          <div className="w-7 h-[1.5px] bg-cyan-400/85 my-0.5" />
-          <span className="text-[9px] font-black tracking-widest text-cyan-400 font-mono leading-none">BAR</span>
+        <div className={`transition-all duration-300 ${scaleClass}`}>
+          <div className="bg-gradient-to-b from-gray-900 via-zinc-950 to-gray-900 border-2 border-cyan-400/80 rounded-lg px-3 py-1 shadow-[0_0_12px_rgba(34,211,238,0.7)] flex flex-col justify-center items-center w-14">
+            <span className="text-[8px] font-black tracking-widest text-cyan-400 font-mono leading-none">BAR</span>
+            <div className="w-10 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent my-1" />
+            <span className="text-[8px] font-black tracking-widest text-cyan-400 font-mono leading-none">BAR</span>
+          </div>
         </div>
       );
+
     case 'BELL':
       return (
-        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
-          <div className="absolute inset-0 bg-amber-500/25 rounded-full blur-md" />
-          <span className="text-4xl filter drop-shadow-[0_0_8px_#f59e0b] select-none">🔔</span>
+        <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${scaleClass}`}>
+          <div className="absolute inset-0 bg-yellow-500/20 rounded-full blur-md" />
+          <svg className="w-10 h-10 filter drop-shadow-[0_2px_8px_rgba(234,179,8,0.7)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="gradBell" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#fef08a" />
+                <stop offset="40%" stopColor="#eab308" />
+                <stop offset="100%" stopColor="#854d0e" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="19.5" r="2.5" fill="#ca8a04" stroke="#fef08a" strokeWidth="0.5" />
+            <path 
+              d="M12 2a5 5 0 00-5 5v5.5L4.5 17h15L17 12.5V7a5 5 0 00-5-5z" 
+              fill="url(#gradBell)" 
+              stroke="#fef08a" 
+              strokeWidth="0.75" 
+            />
+            <path d="M10 4.5a3 3 0 012-.5" stroke="#ffffff" strokeWidth="0.75" strokeLinecap="round" />
+            <rect x="10" y="1" width="4" height="2" rx="1" fill="#a16207" stroke="#fef08a" strokeWidth="0.5" />
+          </svg>
         </div>
       );
+
     case 'CHERRY':
       return (
-        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+        <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${scaleClass}`}>
           <div className="absolute inset-0 bg-rose-500/25 rounded-full blur-md" />
-          <span className="text-4xl filter drop-shadow-[0_0_8px_#f43f5e] select-none">🍒</span>
+          <svg className="w-11 h-11 filter drop-shadow-[0_2px_8px_rgba(244,63,94,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="gradCherry" x1="0.2" y1="0.2" x2="0.8" y2="0.8">
+                <stop offset="0%" stopColor="#fda4af" />
+                <stop offset="35%" stopColor="#f43f5e" />
+                <stop offset="85%" stopColor="#be123c" />
+                <stop offset="100%" stopColor="#4c0519" />
+              </linearGradient>
+              <linearGradient id="stemGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#86efac" />
+                <stop offset="100%" stopColor="#15803d" />
+              </linearGradient>
+            </defs>
+            <path d="M16 3c-1.5 1.5-3.5 5.5-4 9M16 3c-3 1-7.5 4.5-8 9.5" stroke="url(#stemGrad)" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M16 3c-2 .5-3 2.5-3 2.5s2.5.5 3-2.5z" fill="#22c55e" stroke="#15803d" strokeWidth="0.5" />
+            <circle cx="7.5" cy="14.5" r="4.5" fill="url(#gradCherry)" stroke="#fda4af" strokeWidth="0.5" />
+            <circle cx="6.2" cy="12.5" r="1.2" fill="#ffffff" opacity="0.8" />
+            <circle cx="15.5" cy="14" r="4.5" fill="url(#gradCherry)" stroke="#fda4af" strokeWidth="0.5" />
+            <circle cx="14.2" cy="12" r="1.2" fill="#ffffff" opacity="0.8" />
+          </svg>
         </div>
       );
+
     case 'DIAMOND':
       return (
-        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+        <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${scaleClass}`}>
           <div className="absolute inset-0 bg-cyan-500/25 rounded-full blur-md" />
-          <span className="text-4xl filter drop-shadow-[0_0_8px_#06b6d4] select-none">💎</span>
+          <svg className="w-11 h-11 filter drop-shadow-[0_2px_8px_rgba(6,182,212,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="gradDia1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#e0f2fe" />
+                <stop offset="100%" stopColor="#0284c7" />
+              </linearGradient>
+              <linearGradient id="gradDia2" x1="1" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#bae6fd" />
+                <stop offset="100%" stopColor="#0369a1" />
+              </linearGradient>
+            </defs>
+            <path d="M12 2L4 9l8 13 8-13-8-7z" fill="url(#gradDia1)" />
+            <path d="M12 2L8.5 9h7L12 2z" fill="#f0f9ff" opacity="0.8" />
+            <path d="M8.5 9L12 22l3.5-13h-7z" fill="url(#gradDia2)" opacity="0.7" />
+            <path d="M4 9h4.5L12 22 4 9z" fill="#0284c7" opacity="0.9" />
+            <path d="M20 9h-4.5L12 22 20 9z" fill="#0c4a6e" opacity="0.9" />
+            <path d="M12 2L4 9l8 13 8-13-8-7z" stroke="#ffffff" strokeWidth="0.5" />
+          </svg>
         </div>
       );
+
     case 'LEMON':
       return (
-        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+        <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${scaleClass}`}>
           <div className="absolute inset-0 bg-yellow-400/20 rounded-full blur-md" />
-          <span className="text-4xl filter drop-shadow-[0_0_8px_#eab308] select-none">🍋</span>
+          <svg className="w-10 h-10 filter drop-shadow-[0_2px_8px_rgba(234,179,8,0.8)] rotate-12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="gradLemon" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#fffbeb" />
+                <stop offset="40%" stopColor="#fef08a" />
+                <stop offset="85%" stopColor="#eab308" />
+                <stop offset="100%" stopColor="#854d0e" />
+              </linearGradient>
+            </defs>
+            <path 
+              d="M21 11.5c.5-1.5-.5-4-3-6.5S13 2 11.5 2.5c-2.5 1-8 6-9 9-.8 2.5.5 6 3 8.5s6.5 3.5 9 2.5c1.1-.5 5.5-6.5 6.5-11z" 
+              fill="url(#gradLemon)" 
+              stroke="#fef08a" 
+              strokeWidth="0.75" 
+            />
+            <path d="M4.5 16.5c2 2.5 5.5 3.5 8 2.5" stroke="#facc15" strokeWidth="0.75" />
+            <circle cx="11.5" cy="11.5" r="5" stroke="#ffffff" strokeWidth="0.5" strokeDasharray="3 1.5" opacity="0.6" />
+            <circle cx="15.5" cy="8" r="1.2" fill="#ffffff" opacity="0.8" />
+          </svg>
         </div>
       );
+
     case 'PLUM':
       return (
-        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+        <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${scaleClass}`}>
           <div className="absolute inset-0 bg-purple-500/25 rounded-full blur-md" />
-          <span className="text-4xl filter drop-shadow-[0_0_8px_#a855f7] select-none">🍇</span>
+          <svg className="w-11 h-11 filter drop-shadow-[0_2px_8px_rgba(168,85,247,0.8)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="gradPlum" x1="0.2" y1="0.2" x2="0.8" y2="0.8">
+                <stop offset="0%" stopColor="#f3e8ff" />
+                <stop offset="35%" stopColor="#c084fc" />
+                <stop offset="75%" stopColor="#9333ea" />
+                <stop offset="100%" stopColor="#581c87" />
+              </linearGradient>
+            </defs>
+            <path d="M12 6C11 3.5 8.5 3 8.5 3" stroke="#22c55e" strokeWidth="1.2" />
+            <path d="M12 6c1.5-1 3-1 3-1s-1 2-3 1z" fill="#22c55e" />
+            <circle cx="12" cy="13.5" r="6" fill="url(#gradPlum)" stroke="#e9d5ff" strokeWidth="0.5" />
+            <path d="M12 7.5c-.5 1.5-.5 4.5 0 6" stroke="#581c87" strokeWidth="0.5" opacity="0.5" />
+            <circle cx="10" cy="10.5" r="1.3" fill="#ffffff" opacity="0.85" />
+          </svg>
         </div>
       );
+
     case 'DOLLAR':
       return (
-        <div className={`relative flex items-center justify-center w-12 h-12 transition-transform duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+        <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${scaleClass}`}>
           <div className="absolute inset-0 bg-yellow-500/35 rounded-full blur-md" />
-          <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 via-amber-400 to-yellow-500 filter drop-shadow-[0_0_10px_#f59e0b] select-none font-sans">
-            $
-          </span>
+          <svg className="w-11 h-11 filter drop-shadow-[0_0_10px_#eab308] animate-pulse" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="gradGold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#fef08a" />
+                <stop offset="50%" stopColor="#facc15" />
+                <stop offset="100%" stopColor="#ca8a04" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" fill="url(#gradGold)" stroke="#fef08a" strokeWidth="0.75" />
+            <circle cx="12" cy="12" r="8" stroke="#ca8a04" strokeWidth="0.5" strokeDasharray="2 1" />
+            <path 
+              d="M12 5v14M14.5 8H11a2.5 2.5 0 000 5h2a2.5 2.5 0 010 5H9" 
+              stroke="#854d0e" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+            />
+            <path d="M5.5 8.5A7.5 7.5 0 0112 4.5" stroke="#ffffff" strokeWidth="0.75" strokeLinecap="round" opacity="0.8" />
+          </svg>
         </div>
       );
+
     default:
       return <span className="text-4xl select-none">{symbol}</span>;
   }

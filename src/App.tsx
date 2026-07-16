@@ -33,6 +33,10 @@ import { LobbyFooter } from './components/LobbyFooter';
 import { ActiveGameWrapper } from './components/ActiveGameWrapper';
 import { SlotGame } from './components/SlotGame';
 import { CyberWildsSlots } from './components/CyberWildsSlots';
+import { ZenSakuraSlots } from './components/ZenSakuraSlots';
+import { CosmicVoidSlots } from './components/CosmicVoidSlots';
+import { PirateCoveSlots } from './components/PirateCoveSlots';
+import { PharaohGoldSlots } from './components/PharaohGoldSlots';
 import { GemsFortuneGame } from './components/GemsFortuneGame';
 import { DiceGame } from './components/DiceGame';
 import { CrashGame } from './components/CrashGame';
@@ -119,6 +123,10 @@ const CASINO_GAMES = [
   { id: 'BINGO', name: '🎟️ Classic Bingo', desc: '75-Ball classic bingo floor with custom speed & voice calling', category: 'specialty', badge: 'POPULAR' },
   { id: 'SLOTS', name: '🎰 Vegas Slots', desc: 'Spin golden reels & win massive chip jackpots', category: 'slots', badge: 'HOT' },
   { id: 'CYBER_SLOTS', name: '🔥 Cyber Wilds Slots', desc: 'Sizzle with expanding multi-line cyber wild spins', category: 'slots', badge: 'NEW' },
+  { id: 'ZEN_SLOTS', name: '🌸 Zen Sakura Slots', desc: 'Find inner peace with balanced high-multiplier garden spins', category: 'slots', badge: 'AESTHETIC' },
+  { id: 'COSMIC_SLOTS', name: '🪐 Cosmic Void Slots', desc: 'Align gravitational singularities for high-multiplier cosmic paylines', category: 'slots', badge: 'SCI-FI' },
+  { id: 'PIRATE_SLOTS', name: '🏴‍☠️ Crimson Cove Slots', desc: 'Settle sails to plunder captain\'s bounty on the high seas', category: 'slots', badge: 'HIGH SEAS' },
+  { id: 'PHARAOH_SLOTS', name: '🏺 Pharaoh\'s Gold Slots', desc: 'Excavate hidden Giza chambers to find ancient divine multipliers', category: 'slots', badge: 'MYTHICAL' },
   { id: 'GEMS', name: '💎 Gems Fortune', desc: 'Match colorful gems and discover hidden treasures', category: 'specialty', badge: 'NEW' },
   { id: 'DICE', name: '🎲 Dice Duel', desc: 'Roll the bones in an intense showdown vs House Dealer', category: 'tables', badge: 'FAVORITE' },
   { id: 'CRASH', name: '🚀 Rocket Crash', desc: 'Cash out before the rocket crashes for exponential payouts', category: 'multipliers', badge: 'TRENDING' },
@@ -258,6 +266,10 @@ const GAMES: GameCard[] = [
   { id: 'BINGO', title: 'Bingo Floor', emoji: '🎟️', desc: '75-Ball classical Bingo games', badge: 'Popular', category: 'specialty', bgColor: 'from-blue-600/20 to-indigo-600/20 border-blue-500/30', payout: 'Up to 15x' },
   { id: 'SLOTS', title: 'Vegas Slots', emoji: '🎰', desc: 'Spin & Win the Golden Reels', badge: 'Hot', category: 'slots', bgColor: 'from-amber-600/20 to-red-600/20 border-amber-500/30', payout: 'Up to 1000x' },
   { id: 'CYBER_SLOTS', title: 'Cyber Wilds Slots', emoji: '🔥', desc: 'Sizzle with expanding multi-line cyber wild spins', badge: 'New', category: 'slots', bgColor: 'from-orange-600/20 to-red-600/20 border-orange-500/30', payout: 'Up to 500x' },
+  { id: 'ZEN_SLOTS', title: 'Zen Sakura Slots', emoji: '🌸', desc: 'Find inner peace with balanced high-multiplier garden spins', badge: 'Aesthetic', category: 'slots', bgColor: 'from-pink-600/20 to-rose-800/20 border-pink-500/30', payout: 'Up to 1200x' },
+  { id: 'COSMIC_SLOTS', title: 'Cosmic Void Slots', emoji: '🪐', desc: 'Align gravitational singularities for high-multiplier cosmic paylines', badge: 'Sci-Fi', category: 'slots', bgColor: 'from-violet-600/20 to-indigo-900/20 border-violet-500/30', payout: 'Up to 1500x' },
+  { id: 'PIRATE_SLOTS', title: 'Crimson Cove Slots', emoji: '🏴‍☠️', desc: 'Settle sails to plunder captain\'s bounty on the high seas', badge: 'Plunder', category: 'slots', bgColor: 'from-amber-600/20 to-yellow-900/20 border-amber-500/30', payout: 'Up to 1000x' },
+  { id: 'PHARAOH_SLOTS', title: 'Pharaoh\'s Gold Slots', emoji: '🏺', desc: 'Excavate hidden Giza chambers to find ancient divine multipliers', badge: 'Myth', category: 'slots', bgColor: 'from-yellow-600/20 to-amber-900/20 border-yellow-500/30', payout: 'Up to 1250x' },
   { id: 'GEMS', title: 'Gems Fortune', emoji: '💎', desc: 'Match colorful gems and discover hidden treasures', badge: 'New', category: 'slots', bgColor: 'from-cyan-600/20 to-blue-800/20 border-cyan-500/30', payout: 'Up to 500x' },
   { id: 'CRASH', title: 'Rocket Crash', emoji: '🚀', desc: 'Exponential multipliers space flight', badge: 'Trending', category: 'multipliers', bgColor: 'from-purple-600/20 to-indigo-600/20 border-purple-500/30', payout: 'Unlimited' },
   { id: 'MINES', title: 'Mines Floor', desc: 'Dodge mines and collect multiplier tiles', emoji: '💣', category: 'multipliers', bgColor: 'from-red-600/20 to-zinc-800/20 border-red-500/30', payout: 'Up to 500x' },
@@ -1528,6 +1540,54 @@ export default function App() {
                 onUpdateChips={(delta) => {
                   const desc = delta > 0 ? `Cyber Wilds Slots Spin: Won +${delta} Chips! 🔥` : `Cyber Wilds Slots: Placed ${Math.abs(delta)} Chip spin`;
                   handleUpdateChipsWithLog('CYBER_SLOTS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'ZEN_SLOTS' && (
+              <ZenSakuraSlots
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Zen Sakura Slots Spin: Won +${delta} Chips! 🌸` : `Zen Sakura Slots: Placed ${Math.abs(delta)} Chip spin`;
+                  handleUpdateChipsWithLog('ZEN_SLOTS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'COSMIC_SLOTS' && (
+              <CosmicVoidSlots
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Cosmic Void Slots Spin: Won +${delta} Chips! 🪐` : `Cosmic Void Slots: Placed ${Math.abs(delta)} Chip spin`;
+                  handleUpdateChipsWithLog('COSMIC_SLOTS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'PIRATE_SLOTS' && (
+              <PirateCoveSlots
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Crimson Cove Slots Spin: Won +${delta} Chips! 🏴‍☠️` : `Crimson Cove Slots: Placed ${Math.abs(delta)} Chip spin`;
+                  handleUpdateChipsWithLog('PIRATE_SLOTS', delta, desc);
+                }}
+                onUpdateTask={updateDailyTaskProgress}
+                triggerAlert={triggerAlert}
+              />
+            )}
+
+            {activeLobbyTab === 'PHARAOH_SLOTS' && (
+              <PharaohGoldSlots
+                chips={profile.chips}
+                onUpdateChips={(delta) => {
+                  const desc = delta > 0 ? `Pharaoh's Gold Slots Spin: Won +${delta} Chips! 🏺` : `Pharaoh's Gold Slots: Placed ${Math.abs(delta)} Chip spin`;
+                  handleUpdateChipsWithLog('PHARAOH_SLOTS', delta, desc);
                 }}
                 onUpdateTask={updateDailyTaskProgress}
                 triggerAlert={triggerAlert}

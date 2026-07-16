@@ -392,61 +392,92 @@ export const CyberWildsSlots: React.FC<CyberWildsSlotsProps> = ({
       case 'WILD':
         return (
           <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
-            <div className="absolute inset-0 bg-orange-600/35 rounded-full blur-md animate-pulse" />
-            <span className="text-4xl filter drop-shadow-[0_0_12px_#fb923c] select-none animate-bounce" style={{ animationDuration: '2s' }}>🔥</span>
-            <span className="absolute bottom-[-4px] text-[8px] bg-orange-500 text-black font-black px-1 rounded font-mono select-none">WILD</span>
+            <div className="absolute inset-0 bg-gradient-to-tr from-orange-600/25 to-red-600/35 rounded-full blur-md animate-pulse" />
+            <div className="absolute inset-0 border border-orange-500/35 rounded-full animate-spin [animation-duration:8s]" />
+            <div className="w-11 h-11 bg-black/70 border border-orange-500 rounded-full flex items-center justify-center shadow-[0_0_15px_#f97316]">
+              <Flame className="w-5.5 h-5.5 text-orange-500 fill-orange-500/20 drop-shadow-[0_0_8px_#f97316] animate-bounce" style={{ animationDuration: '2s' }} />
+            </div>
+            <span className="absolute -bottom-1 text-[6.5px] bg-orange-600 text-black font-extrabold px-1.5 py-0.5 rounded-full font-mono select-none tracking-widest uppercase">WILD</span>
           </div>
         );
       case 'EYE':
         return (
           <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
-            <div className="absolute inset-0 bg-fuchsia-500/25 rounded-full blur-md" />
-            <span className="text-4xl filter drop-shadow-[0_0_10px_#d946ef] select-none">👁️</span>
+            <div className="absolute inset-0 bg-gradient-to-tr from-fuchsia-600/20 to-purple-600/30 rounded-full blur-md" />
+            <div className="absolute inset-1 border border-fuchsia-500/30 rounded-full border-dashed animate-spin [animation-duration:12s]" />
+            <div className="w-11 h-11 bg-black/70 border border-fuchsia-500 rounded-full flex items-center justify-center shadow-[0_0_12px_#d946ef]">
+              <Eye className="w-5.5 h-5.5 text-fuchsia-400 drop-shadow-[0_0_6px_#d946ef]" />
+            </div>
+            <span className="absolute -bottom-1 text-[6.5px] bg-fuchsia-600/80 text-white font-mono font-bold px-1 rounded select-none">MATRIX</span>
           </div>
         );
       case 'CUBE':
         return (
           <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
-            <div className="absolute inset-0 bg-cyan-500/25 rounded-full blur-md animate-pulse" />
-            <span className="text-4xl filter drop-shadow-[0_0_10px_#22d3ee] select-none">🧊</span>
+            <div className="absolute inset-0 bg-gradient-to-tr from-cyan-600/20 to-blue-600/30 rounded-lg blur-md" />
+            <div className="w-11 h-11 bg-black/70 border border-cyan-400 rounded-xl flex items-center justify-center shadow-[0_0_12px_#06b6d4]">
+              <svg className="w-5.5 h-5.5 text-cyan-400 drop-shadow-[0_0_6px_#06b6d4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
+              </svg>
+            </div>
+            <span className="absolute -bottom-1 text-[6.5px] bg-cyan-600/80 text-white font-mono font-bold px-1 rounded select-none">GRID</span>
           </div>
         );
       case 'CROWN':
         return (
           <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
-            <div className="absolute inset-0 bg-yellow-400/20 rounded-full blur-md" />
-            <span className="text-4xl filter drop-shadow-[0_0_10px_#facc15] select-none">👑</span>
+            <div className="absolute inset-0 bg-gradient-to-tr from-yellow-600/20 to-amber-600/30 rounded-full blur-md" />
+            <div className="w-11 h-11 bg-black/70 border border-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_12px_#eab308]">
+              <Crown className="w-5.5 h-5.5 text-yellow-400 fill-yellow-400/10 drop-shadow-[0_0_6px_#eab308]" />
+            </div>
+            <span className="absolute -bottom-1 text-[6.5px] bg-yellow-500 text-black font-extrabold px-1 rounded font-mono select-none">ELITE</span>
           </div>
         );
       case 'HEART':
         return (
           <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
-            <div className="absolute inset-0 bg-rose-500/20 rounded-full blur-md" />
-            <span className="text-4xl filter drop-shadow-[0_0_10px_#fb7185] select-none">💖</span>
+            <div className="absolute inset-0 bg-gradient-to-tr from-rose-600/20 to-pink-600/30 rounded-full blur-md" />
+            <div className="w-11 h-11 bg-black/70 border border-rose-500 rounded-full flex items-center justify-center shadow-[0_0_12px_#f43f5e]">
+              <Heart className="w-5.5 h-5.5 text-rose-400 fill-rose-500/20 drop-shadow-[0_0_6px_#f43f5e]" />
+            </div>
+            <span className="absolute -bottom-1 text-[6.5px] bg-rose-500/80 text-white font-mono font-bold px-1 rounded select-none">CORE</span>
           </div>
         );
       case 'KEY':
         return (
           <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
-            <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-md" />
-            <span className="text-4xl filter drop-shadow-[0_0_8px_#34d399] select-none">🔑</span>
+            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-600/20 to-teal-600/30 rounded-full blur-md" />
+            <div className="w-11 h-11 bg-black/70 border border-emerald-400 rounded-full flex items-center justify-center shadow-[0_0_12px_#10b981]">
+              <Key className="w-4.5 h-4.5 text-emerald-400 drop-shadow-[0_0_6px_#10b981] rotate-45" />
+            </div>
+            <span className="absolute -bottom-1 text-[6.5px] bg-emerald-600/80 text-white font-mono font-bold px-1 rounded select-none">CRYPTO</span>
           </div>
         );
       case 'COIN':
         return (
           <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
-            <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-md" />
-            <span className="text-4xl filter drop-shadow-[0_0_8px_#fbbf24] select-none animate-pulse">🪙</span>
+            <div className="absolute inset-0 bg-gradient-to-tr from-amber-600/20 to-yellow-600/30 rounded-full blur-md" />
+            <div className="w-11 h-11 bg-black/70 border-2 border-amber-400 rounded-full flex items-center justify-center shadow-[0_0_12px_#f59e0b]">
+              <div className="w-8 h-8 rounded-full border border-dashed border-amber-400/40 flex items-center justify-center">
+                <Coins className="w-4.5 h-4.5 text-amber-400 drop-shadow-[0_0_6px_#f59e0b]" />
+              </div>
+            </div>
+            <span className="absolute -bottom-1 text-[6.5px] bg-amber-500 text-black font-mono font-black px-1 rounded-full select-none">COIN</span>
           </div>
         );
       case 'BAR':
         return (
-          <div className={`bg-[#030310] border-2 border-blue-400 rounded-lg px-3 py-1 shadow-[0_0_10px_rgba(96,165,250,0.8)] flex flex-col justify-center items-center scale-90 ${isMiddle ? 'scale-105' : 'scale-80 opacity-30'}`}>
-            <span className="text-[10px] font-black tracking-widest text-blue-400 font-mono leading-none flex items-center gap-1">
-              <Zap className="w-2 h-2 fill-blue-400 text-transparent" /> CYBER
-            </span>
-            <div className="w-10 h-[1.5px] bg-blue-400/80 my-0.5" />
-            <span className="text-[10px] font-black tracking-widest text-blue-400 font-mono leading-none">BAR</span>
+          <div className={`relative flex items-center justify-center w-14 h-14 transition-all duration-300 ${isMiddle ? 'scale-110' : 'scale-90 opacity-40'}`}>
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/25 to-indigo-600/35 rounded-xl blur-md" />
+            <div className="w-12 h-11 bg-[#050518] border-2 border-blue-400 rounded-lg shadow-[0_0_12px_rgba(59,130,246,0.8)] flex flex-col justify-center items-center">
+              <span className="text-[7.5px] font-black tracking-widest text-blue-400 font-mono leading-none flex items-center gap-0.5">
+                <Zap className="w-2.5 h-2.5 fill-blue-400 text-transparent" /> CYBER
+              </span>
+              <div className="w-8 h-[1.5px] bg-gradient-to-r from-transparent via-blue-400 to-transparent my-0.5" />
+              <span className="text-[7.5px] font-black tracking-widest text-blue-400 font-mono leading-none">BAR</span>
+            </div>
           </div>
         );
       default:
@@ -517,8 +548,8 @@ export const CyberWildsSlots: React.FC<CyberWildsSlotsProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
               {Object.entries(CYBER_SYMBOLS).map(([key, sym]) => (
                 <div key={key} className="flex items-center gap-2 p-2 bg-white/5 rounded-xl border border-white/5">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-cyan-950/20 text-xl border border-cyan-500/10">
-                    {sym.char}
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-cyan-950/20 border border-cyan-500/10 scale-90">
+                    {renderCyberSymbol(key, true)}
                   </div>
                   <div>
                     <span className="block text-[9px] font-mono text-white/40 leading-none">{sym.name}</span>
