@@ -6,6 +6,7 @@ import {
   ChevronLeft, Star, Award, Monitor, Zap, Eye, RotateCcw, ThumbsUp 
 } from 'lucide-react';
 import { PlayerProfile } from '../types';
+import { ProvablyFairVerifier } from './ProvablyFairVerifier';
 
 interface ActiveGameWrapperProps {
   activeGame: string;
@@ -338,7 +339,10 @@ const SUGGESTED_OTHER_GAMES = [
   { id: 'GEMS', name: '💎 Gems Fortune', category: 'Slots' },
   { id: 'CRASH', name: '🚀 Rocket Crash', category: 'Multipliers' },
   { id: 'MINES', name: '💣 Mines Floor', category: 'Multipliers' },
-  { id: 'PLINKO', name: '🎯 Cosmic Plinko', category: 'Multipliers' }
+  { id: 'PLINKO', name: '🎯 Cosmic Plinko', category: 'Multipliers' },
+  { id: 'SOCCER', name: '⚽ Penalty Shootout', category: 'Specialty' },
+  { id: 'CRICKET', name: '🏏 Super Over Challenge', category: 'Specialty' },
+  { id: 'BASKETBALL', name: '🏀 Neon Dunk Classic', category: 'Specialty' }
 ];
 
 export const ActiveGameWrapper: React.FC<ActiveGameWrapperProps> = ({ 
@@ -348,7 +352,7 @@ export const ActiveGameWrapper: React.FC<ActiveGameWrapperProps> = ({
   onBackToLobby, 
   children 
 }) => {
-  const [activeTab, setActiveTab] = useState<'play' | 'about' | 'how-to' | 'reviews'>('play');
+  const [activeTab, setActiveTab] = useState<'play' | 'about' | 'how-to' | 'reviews' | 'integrity'>('play');
 
   // Find base name from the list
   const baseGameInfo = SUGGESTED_OTHER_GAMES.find(g => g.id === activeGame) || { name: `${activeGame} Game`, category: 'Vegas Classic' };
@@ -422,6 +426,7 @@ export const ActiveGameWrapper: React.FC<ActiveGameWrapperProps> = ({
       <div className="flex overflow-x-auto scrollbar-none border-b border-white/10 gap-1 pb-0 whitespace-nowrap">
         {[
           { id: 'play', label: '🎮 PLAY GAME', icon: <Monitor className="w-3.5 h-3.5" /> },
+          { id: 'integrity', label: '🛡️ PROVABLY FAIR', icon: <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> },
           { id: 'about', label: '📖 ABOUT & INFO', icon: <Info className="w-3.5 h-3.5" /> },
           { id: 'how-to', label: '📋 HOW TO PLAY', icon: <HelpCircle className="w-3.5 h-3.5" /> },
           { id: 'reviews', label: '⭐ GUEST REVIEWS', icon: <MessageSquare className="w-3.5 h-3.5" /> }
@@ -527,6 +532,13 @@ export const ActiveGameWrapper: React.FC<ActiveGameWrapperProps> = ({
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Provably Fair Cryptographic Integrity Panel */}
+      {activeTab === 'integrity' && (
+        <div className="space-y-4 sm:space-y-8 animate-fade-in">
+          <ProvablyFairVerifier activeGame={activeGame} />
         </div>
       )}
 
